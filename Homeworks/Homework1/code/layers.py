@@ -6,16 +6,16 @@ def fc_forward(x, w, b):
     """
     Computes the forward pass for a fully-connected layer.
 
-    The input x has shape (N, d_1, ..., d_k) and contains a minibatch of N
-    examples, where each example x[i] has shape (d_1, ..., d_k).
+    The input x has shape (N, Din) and contains a minibatch of N
+    examples, where each example x[i] has shape (Din,).
 
     Inputs:
-    - x: A numpy array containing input data, of shape (N, d_1, ..., d_k)
-    - w: A numpy array of weights, of shape (d_k, d_o)
-    - b: A numpy array of biases, of shape (d_o,)
+    - x: A numpy array containing input data, of shape (N, Din)
+    - w: A numpy array of weights, of shape (Din, Dout)
+    - b: A numpy array of biases, of shape (Dout,)
 
     Returns a tuple of:
-    - out: output, of shape (N, d_1, ..., d_k-1, d_o)
+    - out: output, of shape (N, Dout)
     - cache: (x, w, b)
     """
     out = None
@@ -35,16 +35,16 @@ def fc_backward(dout, cache):
     Computes the backward pass for a fully_connected layer.
 
     Inputs:
-    - dout: Upstream derivative, of shape (N, d_1, ..., d_k-1, d_o)
+    - dout: Upstream derivative, of shape (N, Dout)
     - cache: Tuple of:
-      - x: Input data, of shape (N, d_1, ... d_k)
-      - w: Weights, of shape (d_k, d_o)
-      - b: Biases, of shape (d_o,)
+      - x: Input data, of shape (N, Din)
+      - w: Weights, of shape (Din, Dout)
+      - b: Biases, of shape (Dout,)
 
     Returns a tuple of:
-    - dx: Gradient with respect to x, of shape (N, d1, ..., d_k)
-    - dw: Gradient with respect to w, of shape (d_k, d_o)
-    - db: Gradient with respect to b, of shape (d_o,)
+    - dx: Gradient with respect to x, of shape (N, Din)
+    - dw: Gradient with respect to w, of shape (Din, Dout)
+    - db: Gradient with respect to b, of shape (Dout,)
     """
     x, w, b = cache
     dx, dw, db = None, None, None
@@ -231,7 +231,7 @@ def batchnorm_backward(dout, cache):
 
 def dropout_forward(x, dropout_param):
     """
-    Performs the forward pass for (inverted) dropout.
+    Performs the forward pass for dropout.
 
     Inputs:
     - x: Input data, of any shape
@@ -249,7 +249,6 @@ def dropout_forward(x, dropout_param):
       mask that was used to multiply the input; in test mode, mask is None.
 
     NOTE: Implement the vanilla version of dropout.
-    See http://cs231n.github.io/neural-networks-2/#reg for more details.
 
     NOTE 2: Keep in mind that p is the probability of **keep** a neuron
     output; this might be contrary to some sources, where it is referred to
@@ -288,7 +287,7 @@ def dropout_forward(x, dropout_param):
 
 def dropout_backward(dout, cache):
     """
-    Perform the backward pass for (inverted) dropout.
+    Perform the backward pass for dropout.
 
     Inputs:
     - dout: Upstream derivatives, of any shape
@@ -311,7 +310,7 @@ def dropout_backward(dout, cache):
     return dx
 
 
-def conv_forward(x, w, conv_param):
+def conv_forward(x, w):
     """
     The input consists of N data points, each with C channels, height H and
     width W. We convolve each input with F different filters, where each filter
@@ -336,7 +335,7 @@ def conv_forward(x, w, conv_param):
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
-    cache = (x, w, conv_param)
+    cache = (x, w)
     return out, cache
 
 
@@ -414,8 +413,6 @@ def max_pool_backward(dout, cache):
     return dx
 
 
-
-
 def svm_loss(x, y):
   """
   Computes the loss and gradient for binary SVM classification.
@@ -443,7 +440,6 @@ def logistic_loss(x, y):
   """
 
   return loss, dx
-
 
 
 def softmax_loss(x, y):

@@ -52,8 +52,8 @@ class SVM(object):
 
     Returns:
     If y is None, then run a test-time forward pass of the model and return:
-    - scores: Array of shape (N,) where scores[i] represents the probability
-    that X[i] belongs to the positive class.
+    - scores: Array of shape (N,) where scores[i] represents the classification 
+    score for X[i].
     
     If y is not None, then run a training-time forward and backward pass and
     return a tuple of:
