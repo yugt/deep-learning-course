@@ -2,6 +2,12 @@ from builtins import range
 import numpy as np
 
 
+# DEBUG TEST
+x=3*np.ones((1,7))
+w=2*np.ones((7,3))
+b=0.5*np.ones((3,))
+Dout=np.ones((1,3))
+
 def fc_forward(x, w, b):
     """
     Computes the forward pass for a fully-connected layer.
@@ -22,7 +28,7 @@ def fc_forward(x, w, b):
     ###########################################################################
     # TODO: Implement the forward pass. Store the result in out.              #
     ###########################################################################
-    pass
+    out=np.matmul(x,w)+b
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
@@ -51,12 +57,17 @@ def fc_backward(dout, cache):
     ###########################################################################
     # TODO: Implement the affine backward pass.                               #
     ###########################################################################
-    pass
+    dx=np.matmul(dout, np.transpose(w))
+    dw=np.matmul(np.transpose(x), dout)
+    db=np.ones(np.shape(b))
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
     return dx, dw, db
 
+out, cache= fc_forward(x,w,b)
+print(cache)
+print(fc_backward(Dout, cache))
 
 def relu_forward(x):
     """
@@ -73,13 +84,15 @@ def relu_forward(x):
     ###########################################################################
     # TODO: Implement the ReLU forward pass.                                  #
     ###########################################################################
-    pass
+    x[x<0]=0
+    out = x
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
     cache = x
     return out, cache
 
+print(relu_forward)
 
 def relu_backward(dout, cache):
     """
@@ -96,7 +109,7 @@ def relu_backward(dout, cache):
     ###########################################################################
     # TODO: Implement the ReLU backward pass.                                 #
     ###########################################################################
-    pass
+    np.matmul()
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
