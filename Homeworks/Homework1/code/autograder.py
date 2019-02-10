@@ -72,7 +72,7 @@ output_dim = 3
 input_size = num_inputs * np.prod(input_shape)
 weight_size = output_dim * np.prod(input_shape)
 
-x = np.linspace(-0.1, 0.5, num=input_size).reshape(num_inputs, *input_shape)
+x = np.linspace(-0.1, 0.5, num=input_size).reshape(num_inputs, np.prod(input_shape))
 w = np.linspace(-0.2, 0.3, num=weight_size).reshape(np.prod(input_shape), output_dim)
 b = np.linspace(-0.3, 0.1, num=output_dim)
 
@@ -88,7 +88,7 @@ print('difference: ', rel_error(out, correct_out))
 
 #FC layer: backward
 np.random.seed(498)
-x = np.random.randn(10, 2, 3)
+x = np.random.randn(10, 2, 3).reshape(10,6)
 w = np.random.randn(6, 5)
 b = np.random.randn(5)
 dout = np.random.randn(10, 5)
