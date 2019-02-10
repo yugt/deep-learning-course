@@ -2,11 +2,6 @@ from builtins import range
 import numpy as np
 
 
-# DEBUG TEST
-x=3*np.ones((1,7))
-w=2*np.ones((7,3))
-b=0.5*np.ones((3,))
-Dout=np.ones((1,3))
 
 def fc_forward(x, w, b):
     """
@@ -59,15 +54,12 @@ def fc_backward(dout, cache):
     ###########################################################################
     dx=np.matmul(dout, np.transpose(w))
     dw=np.matmul(np.transpose(x), dout)
-    db=np.ones(np.shape(b))
+    db=np.matmul(np.ones(dx.shape[0]), dout)
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
     return dx, dw, db
 
-out, cache= fc_forward(x,w,b)
-print(cache)
-print(fc_backward(Dout, cache))
 
 def relu_forward(x):
     """
@@ -84,15 +76,13 @@ def relu_forward(x):
     ###########################################################################
     # TODO: Implement the ReLU forward pass.                                  #
     ###########################################################################
-    x[x<0]=0
-    out = x
+    out = x * (x > 0) # should not modify x, so in-place methods not allowed
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
     cache = x
     return out, cache
 
-print(relu_forward)
 
 def relu_backward(dout, cache):
     """
@@ -109,7 +99,7 @@ def relu_backward(dout, cache):
     ###########################################################################
     # TODO: Implement the ReLU backward pass.                                 #
     ###########################################################################
-    np.matmul()
+    dx = (cache > 0) * dout
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
@@ -185,7 +175,13 @@ def batchnorm_forward(x, gamma, beta, bn_param):
         # Referencing the original paper (https://arxiv.org/abs/1502.03167)   #
         # might prove to be helpful.                                          #
         #######################################################################
-        pass
+        sample_mean = np.mean(x,axis=0)
+        sample_var = np.sum(np.power(x - sample_mean, 2), axis=0) / N + eps
+        sample_std = np.sqrt(sample_var)
+        out = gamma * ((x - sample_mean) / sample_std) + beta
+        running_mean = momentum * running_mean + (1 - momentum) * sample_mean
+        running_var = momentum * running_var + (1 - momentum) * sample_var
+        cache = (x, sample_mean, sample_std)
         #######################################################################
         #                           END OF YOUR CODE                          #
         #######################################################################
@@ -196,7 +192,7 @@ def batchnorm_forward(x, gamma, beta, bn_param):
         # then scale and shift the normalized data using gamma and beta.      #
         # Store the result in the out variable.                               #
         #######################################################################
-        pass
+        out = gamma * (x - running_mean) / np.sqrt(running_var) + beta
         #######################################################################
         #                          END OF YOUR CODE                           #
         #######################################################################
