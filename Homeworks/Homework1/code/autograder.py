@@ -66,14 +66,14 @@ def eval_numerical_gradient_array(f, x, df, h=1e-5):
 
 #FC layer: foward
 num_inputs = 2
-input_shape = (4, 5, 6)
+dim = 120
 output_dim = 3
 
-input_size = num_inputs * np.prod(input_shape)
-weight_size = output_dim * np.prod(input_shape)
+input_size = num_inputs * dim
+weight_size = output_dim * dim
 
-x = np.linspace(-0.1, 0.5, num=input_size).reshape(num_inputs, *input_shape)
-w = np.linspace(-0.2, 0.3, num=weight_size).reshape(np.prod(input_shape), output_dim)
+x = np.linspace(-0.1, 0.5, num=input_size).reshape(num_inputs, dim)
+w = np.linspace(-0.2, 0.3, num=weight_size).reshape(dim, output_dim)
 b = np.linspace(-0.3, 0.1, num=output_dim)
 
 out, _ = fc_forward(x, w, b)
@@ -88,7 +88,7 @@ print('difference: ', rel_error(out, correct_out))
 
 #FC layer: backward
 np.random.seed(498)
-x = np.random.randn(10, 2, 3)
+x = np.random.randn(10, 6)
 w = np.random.randn(6, 5)
 b = np.random.randn(5)
 dout = np.random.randn(10, 5)
@@ -160,7 +160,7 @@ print('dx error: ', rel_error(dx_num, dx))
 # Logistic loss
 np.random.seed(498)
 num_classes, num_inputs = 1, 50
-x = 0.001 * np.random.randn(num_inputs, num_classes)
+x = 0.001 * np.random.randn(num_inputs,)
 y = np.random.randint(num_classes + 1, size=num_inputs)
 for ite in range(num_inputs):
     if y[ite] == 0:
@@ -179,7 +179,7 @@ print('dx error: ', rel_error(dx_num, dx))
 # SVM loss
 np.random.seed(498)
 num_classes, num_inputs = 1, 50
-x = 0.001 * np.random.randn(num_inputs, num_classes)
+x = 0.001 * np.random.randn(num_inputs,)
 y = np.random.randint(num_classes + 1, size=num_inputs)
 for ite in range(num_inputs):
     if y[ite] == 0:
@@ -367,3 +367,4 @@ dx = max_pool_backward(dout, cache)
 print('\nTesting max_pooling_backward function:')
 # The errors should be around 3e-12
 print('dx error: ', rel_error(dx_num, dx))
+
