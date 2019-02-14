@@ -42,7 +42,21 @@ class SoftmaxClassifier(object):
         # dictionary self.params, with fc weights                                  #
         # and biases using the keys 'W' and 'b'                                    #
         ############################################################################
-        pass
+        if hidden_dim:
+            w1 = np.random.normal(scale=weight_scale,size=(input_dim,hidden_dim))
+            b1 = np.zeros(hidden_dim)
+            self.params['W1'] = w1
+            self.params['b1'] = b1
+
+            w2 = np.random.normal(scale=weight_scale,size=(hidden_dim,num_classes))
+            b2 = np.zeros(num_classes)
+            self.params['W2'] = w2
+            self.params['b2'] = b2
+        else:
+            w1 = np.random.normal(scale=weight_scale,size=(input_dim,num_classes))
+            b1 = np.zeros(num_classes)
+            self.params['W1'] = w1
+            self.params['b1'] = b1  
         ############################################################################
         #                             END OF YOUR CODE                             #
         ############################################################################
@@ -72,7 +86,13 @@ class SoftmaxClassifier(object):
         # TODO: Implement the forward pass for the one-layer net, computing the    #
         # class scores for X and storing them in the scores variable.              #
         ############################################################################
-        pass
+        fc1, cache1 = fc_forward(X, self.params['W1'], self.params['b1'])
+        fc2, cache2 = None, None
+        if 'W2' in self.params:
+            act1, cache_act1 = relu_forward(fc1)
+            scores, cache2 = fc_forward(act1, self.params['W2'], self.params['b2'])
+        else:
+            scores = fc1
         ############################################################################
         #                             END OF YOUR CODE                             #
         ############################################################################
@@ -92,9 +112,58 @@ class SoftmaxClassifier(object):
         # automated tests, make sure that your L2 regularization includes a factor #
         # of 0.5 to simplify the expression for the gradient.                      #
         ############################################################################
-        pass
+        loss, dloss = softmax_loss(scores, y)
+
+        l2w1 = np.sum(np.square(self.params['W1']))
+        loss += 0.5 * self.reg * l2w1
+        if 'W2' in self.params:
+            l2w2 = np.sum(np.square(self.params['W2']))
+            loss += 0.5 * self.reg * l2w2
+            dx2, dw2, db2 = fc_backward(dloss, cache2)
+            dw2 += self.reg * self.params['W2']
+            grads['W2'] = dw2
+            grads['b2'] = db2
+            dact1 = relu_backward(dx2, cache_act1)
+            dx1, dw1, db1 = fc_backward(dact1, cache1)
+            dw1 += self.reg * self.params['W1']
+            grads['W1'] = dw1
+            grads['b1'] = db1
+        else:
+            dx1, dw1, db1 = fc_backward(dloss, cache1)
+            dw1 += self.reg * self.params['W1']
+            grads['W1'] = dw1
+            grads['b1'] = db1
         ############################################################################
         #                             END OF YOUR CODE                             #
         ############################################################################
 
         return loss, grads
+
+if __name__ == '__main__':
+    from torchvision.datasets import MNIST
+    import solver
+
+    mnist = MNIST(root="../data/MNIST", train=True, download=True)
+    train_idx = int(0.9 * mnist.train_data.shape[0])
+    train_data = mnist.train_data.numpy().reshape(mnist.train_data.shape[0], -1)
+    train_labels = mnist.train_labels.numpy()
+
+    data = {
+        'X_train': train_data[:train_idx],
+        'y_train': train_labels[:train_idx],
+        'X_val': train_data[train_idx:],
+        'y_val': train_labels[train_idx:]
+    }
+    model = SoftmaxClassifier(hidden_dim=train_data.shape[1], reg=1e-2)
+    solver = solver.Solver(model, data, update_rule='adam',
+                           optim_config={'learning_rate': 1e-3, },
+                           lr_decay=0.9, num_epochs=20, batch_size=1000,
+                           print_every=100, verbose=True)
+    solver.train()
+
+    mnist = MNIST(root="../data/MNIST", train=False, download=True)
+    test_data = mnist.test_data.numpy().reshape(mnist.test_data.shape[0], -1)
+    test_labels = mnist.test_labels.numpy()
+
+    score = model.loss(test_data)
+    print(np.mean(np.argmax(score, axis=1) == test_labels))

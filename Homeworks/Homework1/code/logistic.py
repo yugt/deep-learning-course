@@ -138,7 +138,7 @@ if __name__ == '__main__':
     import pickle
     import solver
 
-    with open("./data.pkl", "rb") as file_hdl:
+    with open("../data/data.pkl", "rb") as file_hdl:
         data, labels = pickle.load(file_hdl, encoding="latin-1")
     train_data, val_data, test_data = data[:500], data[500:750], data[750:]
     train_labels, val_labels, test_labels = labels[:500], labels[500:750], labels[750:]
