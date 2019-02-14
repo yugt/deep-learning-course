@@ -52,9 +52,9 @@ def fc_backward(dout, cache):
     ###########################################################################
     # TODO: Implement the affine backward pass.                               #
     ###########################################################################
-    dx=np.matmul(dout, np.transpose(w))
-    dw=np.matmul(np.transpose(x), dout)
-    db=np.matmul(np.ones(dx.shape[0]), dout)
+    dx = np.matmul(dout, np.transpose(w))
+    dw = np.matmul(np.transpose(x), dout)
+    db = np.matmul(np.ones(dx.shape[0]), dout)
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
@@ -242,11 +242,13 @@ def batchnorm_backward(dout, cache):
     dgamma = np.sum(np.multiply(x_mid, dout), axis=0)
     dbeta = np.sum(dout, axis=0)
 
-    dx_mid = np.multiply(gamma,dout)
-    dvar = np.sum(np.multiply(np.multiply(dx_mid, (x-running_mean)),
-                              (-0.5)*np.power(running_var + eps, -1.5)),axis=0)
-    dmean = np.sum(np.multiply(dx_mid, -np.power(running_var + eps, -0.5)),axis=0)
-    dx = np.multiply(dx_mid, np.power(running_var + eps, -0.5)) +\
+    dvar = np.sum(np.multiply(
+        np.multiply(np.multiply(gamma,dout), (x-running_mean)),
+        (-0.5)*np.power(running_var + eps, -1.5)), axis=0)
+    dmean = np.sum(np.multiply(np.multiply(gamma,dout),
+         -np.power(running_var + eps, -0.5)),axis=0)
+    dx = np.multiply(np.multiply(gamma,dout),
+        np.power(running_var + eps, -0.5)) + \
         np.multiply(dvar, 2*(x - running_mean)/N) + dmean/N
     ###########################################################################
     #                             END OF YOUR CODE                            #
@@ -292,7 +294,7 @@ def dropout_forward(x, dropout_param):
         # TODO: Implement training phase forward pass for inverted dropout.   #
         # Store the dropout mask in the mask variable.                        #
         #######################################################################
-        mask = np.random.uniform(size=x.shape)<p
+        mask = np.random.uniform(size=x.shape) < p
         out = np.multiply(mask, x)
         #######################################################################
         #                           END OF YOUR CODE                          #
@@ -369,7 +371,8 @@ def conv_forward(x, w):
         for f in range(F):
             for h_i in range(H_out):
                 for w_i in range(W_out):
-                    out[i,f,h_i,w_i] = np.sum(x[i,:,h_i:h_i+HH,w_i:w_i+WW] * w[f,:,:,:])
+                    out[i,f,h_i,w_i] =  \
+                        np.sum(x[i,:,h_i:h_i+HH,w_i:w_i+WW] * w[f,:,:,:])
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
