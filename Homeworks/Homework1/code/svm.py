@@ -36,7 +36,21 @@ class SVM(object):
     # weights and biases using the keys 'W1' and 'b1' and second layer weights #
     # and biases (if any) using the keys 'W2' and 'b2'.                        #
     ############################################################################
-    pass
+    if hidden_dim:
+        w1 = np.random.normal(scale=weight_scale,size=(input_dim,hidden_dim))
+        b1 = np.zeros(hidden_dim)
+        self.params['W1'] = w1
+        self.params['b1'] = b1
+
+        w2 = np.random.normal(scale=weight_scale,size=(hidden_dim,1))
+        b2 = np.zeros(1)
+        self.params['W2'] = w2
+        self.params['b2'] = b2
+    else:
+        w1 = np.random.normal(scale=weight_scale,size=(input_dim,1))
+        b1 = np.zeros(1)
+        self.params['W1'] = w1
+        self.params['b1'] = b1  
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
@@ -66,7 +80,15 @@ class SVM(object):
     # TODO: Implement the forward pass for the model, computing the            #
     # scores for X and storing them in the scores variable.                    #
     ############################################################################
-    pass
+    fc1, cache1 = fc_forward(X,self.params['W1'],self.params['b1'])
+    fc2, cache2 = None, None
+    if 'W2' in self.params:
+        act1, cache_act1 = relu_forward(fc1)
+        scores, cache2 = fc_forward(act1, self.params['W2'], self.params['b2'])
+    else:
+        scores = fc1
+    
+    scores = np.squeeze(scores, axis=1)
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
@@ -83,9 +105,60 @@ class SVM(object):
     # Don't forget to add L2 regularization.                                   #
     #                                                                          #
     ############################################################################
-    pass
+    for i in range(y.shape[0]):
+        if y[i]==0:
+            y[i] = -1
+    loss, dloss = svm_loss(scores, y)
+    dloss = np.expand_dims(dloss, axis=1)
+    l2w1 = np.sum(np.square(self.params['W1']))
+    loss += 0.5 * self.reg * l2w1
+    if 'W2' in self.params:
+        l2w2 = np.sum(np.square(self.params['W2']))
+        loss += 0.5 * self.reg * l2w2
+        dx2, dw2, db2 = fc_backward(dloss, cache2)
+        dw2 += self.reg * self.params['W2']
+        grads['W2'] = dw2
+        grads['b2'] = db2
+        dact1 = relu_backward(dx2, cache_act1)
+        dx1, dw1, db1 = fc_backward(dact1, cache1)
+        dw1 += self.reg * self.params['W1']
+        grads['W1'] = dw1
+        grads['b1'] = db1
+    else:
+        dx1, dw1, db1 = fc_backward(dloss, cache1)
+        dw1 += self.reg * self.params['W1']
+        grads['W1'] = dw1
+        grads['b1'] = db1
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
 
     return loss, grads
+
+
+
+if __name__ == '__main__':
+    import pickle
+    import solver
+
+    with open("./data.pkl", "rb") as file_hdl:
+        data, labels = pickle.load(file_hdl, encoding="latin-1")
+
+    train_data, val_data, test_data = data[:500], data[500:750], data[750:]
+    train_labels, val_labels, test_labels = labels[:500], labels[500:750], labels[750:]
+    data = {
+        'X_train': train_data,
+        'y_train': train_labels,
+        'X_val': val_data,
+        'y_val': val_labels
+    }
+    model = SVM(input_dim=train_data.shape[1], hidden_dim=15,
+        weight_scale=0.1, reg=1e-2)
+    solver = solver.Solver(model, data, update_rule='sgd',
+              optim_config={'learning_rate': 1e-1,},
+                           num_epochs=200, batch_size=50,
+                           print_every=100, verbose=True)
+    solver.train()
+
+    score = model.loss(test_data)
+    print("Test acc =",(np.mean((score > 0) == test_labels)))

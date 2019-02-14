@@ -157,4 +157,4 @@ if __name__ == '__main__':
     solver.train()
 
     score = model.loss(test_data)
-    print("Test accuracy: {}".format(np.mean((score > 0) == test_labels)))
+    print("Test acc = ", (np.mean((score > 0) == test_labels)))

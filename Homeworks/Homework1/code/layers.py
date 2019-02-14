@@ -535,9 +535,9 @@ def svm_loss(x, y):
   - loss: Scalar giving the loss
   - dx: Gradient of the loss with respect to x
   """
-  y[y == 0] = -1
-  loss = np.mean(np.maximum(0, 1 - y * x))
-  dx = (-y) * (loss > 0) / x.shape[0]
+  mask = ((1 - np.multiply(x, y)) > 0)
+  loss = np.sum(np.multiply(mask, 1 - np.multiply(x, y)))/x.shape[0]
+  dx = np.multiply(mask, -y)/x.shape[0]
   return loss, dx
 
 
