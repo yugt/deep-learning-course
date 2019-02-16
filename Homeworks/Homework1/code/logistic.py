@@ -148,13 +148,25 @@ if __name__ == '__main__':
         'X_val': val_data,
         'y_val': val_labels
     }
+
+    model = LogisticClassifier(input_dim=train_data.shape[1])
+    log_solver = solver.Solver(model, data, update_rule='sgd',
+                    optim_config={'learning_rate':70, },
+                    lr_decay=0.95, num_epochs=50, batch_size=100,
+                    print_every=100, verbose=True)
+    log_solver.train()
+
+    score = model.loss(test_data)
+    print("Test acc = ", (np.mean((score > 0) == test_labels)))
+
+
     model = LogisticClassifier(input_dim=train_data.shape[1], hidden_dim=30,
                                reg=1e-3)
-    solver = solver.Solver(model, data, update_rule='sgd_momentum',
+    log_solver = solver.Solver(model, data, update_rule='sgd_momentum',
                 optim_config={'learning_rate': 1e-1, },
                 lr_decay=0.95, num_epochs=200, batch_size=5,
                 print_every=100, verbose=True)
-    solver.train()
+    log_solver.train()
 
     score = model.loss(test_data)
     print("Test acc = ", (np.mean((score > 0) == test_labels)))

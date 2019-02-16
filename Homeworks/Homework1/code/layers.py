@@ -413,12 +413,14 @@ def conv_backward(dout, cache):
     
     dx = np.zeros(x.shape)
     for i in range(N):
-        w_tmp = np.pad(w, [(0, 0), (0, 0), (H_out-1, H_out-1), (W_out-1, W_out-1)], 'constant')
+        w_tmp = np.pad(w, [(0, 0), (0, 0),
+         (H_out-1, H_out-1), (W_out-1, W_out-1)], 'constant')
         for j in range(H):
             for k in range(W):
-                local = w_tmp[:,:,j:j+H_out,k:k+W_out]
+                local = w_tmp[:,:,j:j + H_out, k:k + W_out]
                 for c in range(C):
-                    dx[i,c,j,k] += np.sum(np.multiply(local[:,c,:,:],dout[i,:,::-1,::-1]))
+                    dx[i,c,j,k] += np.sum(
+                        np.multiply(local[:,c,:,:],dout[i,:,::-1,::-1]))
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################

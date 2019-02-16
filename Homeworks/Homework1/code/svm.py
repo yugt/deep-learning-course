@@ -152,13 +152,26 @@ if __name__ == '__main__':
         'X_val': val_data,
         'y_val': val_labels
     }
-    model = SVM(input_dim=train_data.shape[1], hidden_dim=15,
-        weight_scale=0.1, reg=1e-2)
-    solver = solver.Solver(model, data, update_rule='sgd',
+
+    model = SVM(input_dim=train_data.shape[1])
+    svm_solver = solver.Solver(model, data, update_rule='sgd',
               optim_config={'learning_rate': 1e-1,},
                            num_epochs=200, batch_size=50,
                            print_every=100, verbose=True)
-    solver.train()
+    svm_solver.train()
+
+    score = model.loss(test_data)
+    print("Test acc =",(np.mean((score > 0) == test_labels)))
+
+
+
+    model = SVM(input_dim=train_data.shape[1], hidden_dim=15,
+        weight_scale=0.1, reg=1e-2)
+    svm_solver = solver.Solver(model, data, update_rule='sgd',
+              optim_config={'learning_rate': 1e-1,},
+                           num_epochs=200, batch_size=50,
+                           print_every=100, verbose=True)
+    svm_solver.train()
 
     score = model.loss(test_data)
     print("Test acc =",(np.mean((score > 0) == test_labels)))

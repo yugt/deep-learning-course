@@ -1,3 +1,10 @@
 .vscode/*
 */.ipynb_checkpoints/*
 *.pyc
+Homeworks/Homework?/data/*
+*.aux
+*.log
+*.out
+main.pdf
+*.gz
+*/_minted-main/*

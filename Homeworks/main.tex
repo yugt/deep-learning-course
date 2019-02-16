@@ -1,0 +1,105 @@
+\documentclass[12pt]{article}
+\usepackage[letterpaper, margin=1in, headheight=105pt]{geometry}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{comment}
+\usepackage{minted}
+\usemintedstyle{manni}
+
+
+
+\begin{document}
+\section{Homework Report}
+\tableofcontents
+
+\newpage
+\subsection{Layers}
+\begin{scriptsize}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework1/code/layers.py}
+\end{scriptsize}
+
+
+\newpage
+\subsection{Logistic}
+\subsubsection{Implementation}
+\begin{scriptsize}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework1/code/logistic.py}
+\end{scriptsize}
+
+\newpage
+\subsubsection{Simple logistic classifier}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework1/code/logistic1.out}
+
+\newpage
+\subsubsection{2-layer neural network with logistic regression}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework1/code/logistic2.out}
+
+
+\newpage
+\subsection{Support vector machine}
+\subsubsection{Implementation}
+\begin{scriptsize}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework1/code/svm.py}
+\end{scriptsize}
+
+\newpage
+\subsubsection{Binary SVM classifier}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework1/code/svm1.out}
+
+\newpage
+\subsubsection{2-lay neural network with hinge loss}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework1/code/svm2.out}
+
+\newpage
+\subsection{Softmax}
+\subsubsection{Implementation}
+\begin{scriptsize}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework1/code/softmax.py}
+\end{scriptsize}
+
+\newpage
+\subsubsection{Softmax multi-class classifier}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework1/code/softmax1.out}
+
+\newpage
+\subsubsection{2-layer neural network with softmax loss}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework1/code/softmax2.out}
+
+\newpage
+\subsection{Convolutional neural network}
+\subsubsection{Implementation}
+\begin{scriptsize}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework1/code/cnn.py}
+\end{scriptsize}
+
+
+\subsubsection{CNN multi-class classifier}
+I am not able to train CNN.
+
+\newpage
+\subsection{Convolutional neural network}
+\subsubsection{Implementation}
+\begin{scriptsize}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework1/code/vgg.py}
+\end{scriptsize}
+
+\newpage
+\subsubsection{Test}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework1/code/vgg.out}
+\subsubsection{Different optimizer}
+The accuracy does not significantly improve by changing the optimizer and learning rate strategy.
+
+
+\newpage
+\subsection{Short answer questions}
+
+\subsubsection{Sigmoid non-linearity}
+Sigmoid brings issues when the number of layers increases because the derivative terms that are less than 1 will be multiplied each other many times that the values will become smaller and smaller until the gradient will vanish.
+
+\subsubsection{Training loss}
+I may decrease the learning rate.
+
+
+\end{document}

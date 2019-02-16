@@ -20,29 +20,43 @@ class VGG(nn.Module):
             # Stage 1
             # TODO: convolutional layer, input channels 3, output channels 8, filter size 3
             # TODO: max-pooling layer, size 2
-            
+            nn.Conv2d(in_channels=3, out_channels=8, kernel_size=3, padding=1),
+            nn.MaxPool2d(kernel_size=2),
             # Stage 2
             # TODO: convolutional layer, input channels 8, output channels 16, filter size 3
             # TODO: max-pooling layer, size 2
-            
+            nn.Conv2d(in_channels=8, out_channels=16, kernel_size=3, padding=1),
+            nn.MaxPool2d(kernel_size=2),
             # Stage 3
             # TODO: convolutional layer, input channels 16, output channels 32, filter size 3
             # TODO: convolutional layer, input channels 32, output channels 32, filter size 3
             # TODO: max-pooling layer, size 2
-            
+            nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, padding=1),
+            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, padding=1),
+            nn.MaxPool2d(kernel_size=2),
             # Stage 4
             # TODO: convolutional layer, input channels 32, output channels 64, filter size 3
             # TODO: convolutional layer, input channels 64, output channels 64, filter size 3
             # TODO: max-pooling layer, size 2
-
+            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1),
+            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1),
+            nn.MaxPool2d(kernel_size=2),
             # Stage 5
             # TODO: convolutional layer, input channels 64, output channels 64, filter size 3
             # TODO: convolutional layer, input channels 64, output channels 64, filter size 3
             # TODO: max-pooling layer, size 2
+            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1),
+            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1),
+            nn.MaxPool2d(kernel_size=2)
         )
+
         self.fc = nn.Sequential(
             # TODO: fully-connected layer (64->64)
             # TODO: fully-connected layer (64->10)
+            nn.Linear(in_features=64, out_features=64),
+            nn.ReLU(),
+            nn.Linear(in_features=64, out_features=10),
+            nn.ReLU()
         )
 
     def forward(self, x):
@@ -63,9 +77,13 @@ def train(trainloader, net, criterion, optimizer, device):
             # TODO: forward pass
             # TODO: backward pass
             # TODO: optimize the network
-            
+            optimizer.zero_grad()
+            scores = net.forward(images)
+            loss = criterion(scores,labels)
+            loss.backward()
+            optimizer.step()
             # print statistics
-            # running_loss += loss.item()
+            running_loss += loss.item()
             if i % 100 == 99:    # print every 2000 mini-batches
                 end = time.time()
                 print('[epoch %d, iter %5d] loss: %.3f eplased time %.3f' %
@@ -98,12 +116,12 @@ def main():
         [transforms.ToTensor(),
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-    trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
+    trainset = torchvision.datasets.CIFAR10(root='../data', train=True,
                                         download=True, transform=transform)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=100,
                                           shuffle=True)
 
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+    testset = torchvision.datasets.CIFAR10(root='../data', train=False,
                                        download=True, transform=transform)
     testloader = torch.utils.data.DataLoader(testset, batch_size=100,
                                          shuffle=False)
@@ -117,4 +135,3 @@ def main():
 
 if __name__== "__main__":
     main()
-   

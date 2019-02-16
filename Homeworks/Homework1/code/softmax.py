@@ -154,16 +154,30 @@ if __name__ == '__main__':
         'X_val': train_data[train_idx:],
         'y_val': train_labels[train_idx:]
     }
-    model = SoftmaxClassifier(hidden_dim=train_data.shape[1], reg=1e-2)
-    solver = solver.Solver(model, data, update_rule='adam',
-                           optim_config={'learning_rate': 1e-3, },
-                           lr_decay=0.9, num_epochs=20, batch_size=1000,
-                           print_every=100, verbose=True)
-    solver.train()
 
     mnist = MNIST(root="../data/MNIST", train=False, download=True)
     test_data = mnist.test_data.numpy().reshape(mnist.test_data.shape[0], -1)
     test_labels = mnist.test_labels.numpy()
+
+
+    model = SoftmaxClassifier(input_dim=train_data.shape[1])
+    smx_solver = solver.Solver(model, data, update_rule='adam',
+                           optim_config={'learning_rate': 1e-3, },
+                           lr_decay=0.9, num_epochs=20, batch_size=1000,
+                           print_every=100, verbose=True)
+    smx_solver.train()
+
+    score = model.loss(test_data)
+    print(np.mean(np.argmax(score, axis=1) == test_labels))
+
+
+    model = SoftmaxClassifier(input_dim=train_data.shape[1],
+                    hidden_dim=train_data.shape[1], reg=1e-2)
+    smx_solver = solver.Solver(model, data, update_rule='adam',
+                           optim_config={'learning_rate': 1e-3, },
+                           lr_decay=0.9, num_epochs=20, batch_size=1000,
+                           print_every=100, verbose=True)
+    smx_solver.train()
 
     score = model.loss(test_data)
     print(np.mean(np.argmax(score, axis=1) == test_labels))
