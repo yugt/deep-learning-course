@@ -8,3 +8,5 @@ Homeworks/Homework?/data/*
 main.pdf
 *.gz
 */_minted-main/*
+Project/*
+.public
