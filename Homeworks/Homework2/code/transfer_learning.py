@@ -12,7 +12,7 @@ import copy
 
 def train_model(device, dataloaders, dataset_sizes, model, criterion, optimizer, scheduler, num_epochs=25):
     since = time.time()
-   
+
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
 
@@ -68,15 +68,18 @@ def train_model(device, dataloaders, dataset_sizes, model, criterion, optimizer,
                 # Perform feedforward operation using model, get the labels using torch.max, and   #
                 # compule loss using the criterion function                                        #
                 ####################################################################################
-            
+                    outputs = model(inputs)
+                    _, preds = torch.max(outputs, 1)
+                    loss = criterion(outputs, labels)
 
                 # backward + optimize only if in training phase
-
-
+                    if phase == 'train':
+                        loss.backward()
+                        optimizer.step()
                 ####################################################################################
                 #                             END OF YOUR CODE                                     #
                 ####################################################################################
-                    
+
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
                 running_corrects += torch.sum(preds == labels.data)
@@ -132,12 +135,12 @@ def visualize_model(device, dataloaders, model, class_names, num_images=6):
             ####################################################################################
             # Perform feedforward operation using model and get the labels using torch.max     #
             ####################################################################################
-            
+
 
             ####################################################################################
             #                             END OF YOUR CODE                                     #
             ####################################################################################
-            
+
             for j in range(inputs.size()[0]):
                 images_so_far += 1
                 ax = plt.subplot(num_images//2, 2, images_so_far)
@@ -159,7 +162,7 @@ def finetune(device, dataloaders, dataset_sizes, class_names):
     ####################################################################################
     # Replace last layer in with a 2-label linear layer                                #
     ####################################################################################
-    
+
 
     ####################################################################################
     #                             END OF YOUR CODE                                     #
@@ -200,7 +203,7 @@ def freeze(device, dataloaders, dataset_sizes, class_names):
     # Freeze all parameterws in the pre-trained network.                               #
     # Hint: go over all parameters and set requires_grad to False                      #
     ####################################################################################
-    
+
 
     ####################################################################################
     #                             END OF YOUR CODE                                     #
@@ -213,7 +216,7 @@ def freeze(device, dataloaders, dataset_sizes, class_names):
     # Replace last layer in with a 2-label linear layer                                #
     ####################################################################################
     # Parameters of newly constructed modules have requires_grad=True by default
-    
+
 
     ####################################################################################
     #                             END OF YOUR CODE                                     #
@@ -227,7 +230,7 @@ def freeze(device, dataloaders, dataset_sizes, class_names):
     # Note: Make sure that the optimizer only updates the parameters of the last layer #
     ####################################################################################
 
-    
+
 
     ####################################################################################
     #                             END OF YOUR CODE                                     #
