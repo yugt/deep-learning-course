@@ -135,8 +135,8 @@ def visualize_model(device, dataloaders, model, class_names, num_images=6):
             ####################################################################################
             # Perform feedforward operation using model and get the labels using torch.max     #
             ####################################################################################
-
-
+            outputs = model(inputs)
+            _, preds = torch.max(outputs, 1)
             ####################################################################################
             #                             END OF YOUR CODE                                     #
             ####################################################################################
