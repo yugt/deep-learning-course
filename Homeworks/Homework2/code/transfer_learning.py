@@ -162,8 +162,7 @@ def finetune(device, dataloaders, dataset_sizes, class_names):
     ####################################################################################
     # Replace last layer in with a 2-label linear layer                                #
     ####################################################################################
-
-
+    model_ft.fc = nn.Linear(in_features=model_ft.fc.in_features, out_features=len(class_names))
     ####################################################################################
     #                             END OF YOUR CODE                                     #
     ####################################################################################
@@ -174,9 +173,8 @@ def finetune(device, dataloaders, dataset_sizes, class_names):
     ####################################################################################
     # Set the criterion function for multi-class classification, and set the optimizer #
     ####################################################################################
-
-
-
+    criterion = nn.CrossEntropyLoss()
+    optimizer_ft = optim.Adam(model_ft.parameters())
     ####################################################################################
     #                             END OF YOUR CODE                                     #
     ####################################################################################
@@ -203,21 +201,18 @@ def freeze(device, dataloaders, dataset_sizes, class_names):
     # Freeze all parameterws in the pre-trained network.                               #
     # Hint: go over all parameters and set requires_grad to False                      #
     ####################################################################################
-
-
+    for param in model_conv.parameters():
+        param.requires_grad = False
     ####################################################################################
     #                             END OF YOUR CODE                                     #
     ####################################################################################
-
-
     ####################################################################################
     #                             START OF YOUR CODE                                   #
     ####################################################################################
     # Replace last layer in with a 2-label linear layer                                #
     ####################################################################################
+    model_conv.fc = nn.Linear(in_features=model_conv.fc.in_features, out_features=len(class_names))
     # Parameters of newly constructed modules have requires_grad=True by default
-
-
     ####################################################################################
     #                             END OF YOUR CODE                                     #
     ####################################################################################
@@ -229,9 +224,8 @@ def freeze(device, dataloaders, dataset_sizes, class_names):
     # Set the criterion function for multi-class classification, and set the optimizer.#
     # Note: Make sure that the optimizer only updates the parameters of the last layer #
     ####################################################################################
-
-
-
+    criterion = nn.CrossEntropyLoss()
+    optimizer_conv = optim.Adam(model_conv.parameters())
     ####################################################################################
     #                             END OF YOUR CODE                                     #
     ####################################################################################
@@ -281,4 +275,5 @@ def main():
     freeze(device, dataloaders, dataset_sizes, class_names)
 
 if __name__== "__main__":
+    # os.chdir('./Homeworks/Homework2/code/')
     main()
