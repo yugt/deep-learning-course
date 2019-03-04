@@ -7,6 +7,8 @@ Homeworks/Homework?/data/*
 *.out
 main.pdf
 *.gz
+*.zip
+*cache*
 */_minted-main/*
 Project/*
 .public
