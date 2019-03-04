@@ -81,6 +81,7 @@ def content_loss(content_weight, content_current, content_target):
     Returns:
     - scalar content loss
     """
+    return content_weight * torch.sum((content_current - content_target) ** 2)
     
 
 
@@ -127,7 +128,13 @@ def style_loss(feats, style_layers, style_targets, style_weights):
     """
     # Hint: you can do this with one for loop over the style layers, and should
     # not be very much code (~5 lines). You will need to use your gram_matrix function.
-
+    loss = Variable(torch.zeros(1))
+    for idx, layer_idx in enumerate(style_layers):
+        loss += content_loss(style_weights[idx],
+                gram_matrix(feats[layer_idx].clone()),
+                style_targets[idx])
+        # loss += style_weights[idx] * torch.sum((gram - style_targets[idx]) ** 2)
+    return loss
 
 
 def tv_loss(img, tv_weight):
@@ -143,6 +150,9 @@ def tv_loss(img, tv_weight):
       for img weighted by tv_weight.
     """
     # Your implementation should be vectorized and not require any loops!
+    col_loss = torch.sum((img[:, :, :, :-1] - img[:, :, :, 1:]) ** 2)
+    row_loss = torch.sum((img[:, :, :-1, :] - img[:, :, 1:, :]) ** 2)
+    return tv_weight * (col_loss + row_loss)
 
 
 
@@ -219,6 +229,11 @@ def style_transfer(content_image, style_image, image_size, style_size, content_l
     plt.show()
     plt.figure()
     
+    c_loss = []
+    s_loss = []
+    t_loss = []
+    total_loss = []
+
     for t in range(200):
         if t < 190:
             img.clamp_(-1.5, 1.5)
@@ -227,9 +242,17 @@ def style_transfer(content_image, style_image, image_size, style_size, content_l
         feats = extract_features(img_var, cnn)
         
         #TODO:Compute loss
+        l_c = content_loss(content_weight, feats[content_layer], content_target)
+        l_s = style_loss(feats, style_layers, style_targets, style_weights)
+        l_tv = tv_loss(img_var, tv_weight)
+        loss = l_c + l_s + l_tv
 
+        c_loss.append(l_c)
+        s_loss.append(l_s)
+        t_loss.append(l_tv)
+        total_loss.append(loss)
 
-
+        loss.backward()
         # Perform gradient descents on our image values
         if t == decay_lr_at:
             optimizer = torch.optim.Adam([img_var], lr=decayed_lr)
