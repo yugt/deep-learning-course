@@ -48,12 +48,12 @@ def rel_error(x,y):
 def extract_features(x, cnn):
     """
     Use the CNN to extract features from the input image x.
-    
+
     Inputs:
     - x: A PyTorch Variable of shape (N, C, H, W) holding a minibatch of images that
       will be fed to the CNN.
     - cnn: A PyTorch model that we will use to extract features.
-    
+
     Returns:
     - features: A list of feature for the input images x extracted using the cnn model.
       features[i] is a PyTorch Variable of shape (N, C_i, H_i, W_i); recall that features
@@ -71,30 +71,30 @@ def extract_features(x, cnn):
 def content_loss(content_weight, content_current, content_target):
     """
     Compute the content loss for style transfer.
-    
+
     Inputs:
     - content_weight: Scalar giving the weighting for the content loss.
     - content_current: features of the current image; this is a PyTorch Tensor of shape
       (1, C_l, H_l, W_l).
     - content_target: features of the content image, Tensor with shape (1, C_l, H_l, W_l).
-    
+
     Returns:
     - scalar content loss
     """
     return content_weight * torch.sum((content_current - content_target) ** 2)
-    
+
 
 
 def gram_matrix(features, normalize=True):
     """
     Compute the Gram matrix from features.
-    
+
     Inputs:
     - features: PyTorch Variable of shape (N, C, H, W) giving features for
       a batch of N images.
     - normalize: optional, whether to normalize the Gram matrix
         If True, divide the Gram matrix by the number of neurons (H * W * C)
-    
+
     Returns:
     - gram: PyTorch Variable of shape (N, C, C) giving the
       (optionally normalized) Gram matrices for the N input images.
@@ -111,7 +111,7 @@ def gram_matrix(features, normalize=True):
 def style_loss(feats, style_layers, style_targets, style_weights):
     """
     Computes the style loss at a set of layers.
-    
+
     Inputs:
     - feats: list of the features at every layer of the current image, as produced by
       the extract_features function.
@@ -122,7 +122,7 @@ def style_loss(feats, style_layers, style_targets, style_weights):
       layer style_layers[i].
     - style_weights: List of the same length as style_layers, where style_weights[i]
       is a scalar giving the weight for the style loss at layer style_layers[i].
-      
+
     Returns:
     - style_loss: A PyTorch Variable holding a scalar giving the style loss.
     """
@@ -133,18 +133,17 @@ def style_loss(feats, style_layers, style_targets, style_weights):
         loss += content_loss(style_weights[idx],
                 gram_matrix(feats[layer_idx].clone()),
                 style_targets[idx])
-        # loss += style_weights[idx] * torch.sum((gram - style_targets[idx]) ** 2)
     return loss
 
 
 def tv_loss(img, tv_weight):
     """
     Compute total variation loss.
-    
+
     Inputs:
     - img: PyTorch Variable of shape (1, 3, H, W) holding an input image.
     - tv_weight: Scalar giving the weight w_t to use for the TV loss.
-    
+
     Returns:
     - loss: PyTorch Variable holding a scalar giving the total variation loss
       for img weighted by tv_weight.
@@ -160,7 +159,7 @@ def style_transfer(content_image, style_image, image_size, style_size, content_l
                    style_layers, style_weights, tv_weight, init_random = False):
     """
     Run style transfer!
-    
+
     Inputs:
     - content_image: filename of content image
     - style_image: filename of style image
@@ -182,7 +181,7 @@ def style_transfer(content_image, style_image, image_size, style_size, content_l
     cnn = torchvision.models.squeezenet1_1(pretrained=True).features
     cnn.type(dtype)
 
-    # We don't want to train the model any further, so we don't want PyTorch to waste computation 
+    # We don't want to train the model any further, so we don't want PyTorch to waste computation
     # computing gradients on parameters we're never going to update.
     for param in cnn.parameters():
         param.requires_grad = False
@@ -218,7 +217,7 @@ def style_transfer(content_image, style_image, image_size, style_size, content_l
     # Note that we are optimizing the pixel values of the image by passing
     # in the img_var Torch variable, whose requires_grad flag is set to True
     optimizer = torch.optim.Adam([img_var], lr=initial_lr)
-    
+
     f, axarr = plt.subplots(1,2)
     axarr[0].axis('off')
     axarr[1].axis('off')
@@ -228,7 +227,7 @@ def style_transfer(content_image, style_image, image_size, style_size, content_l
     axarr[1].imshow(deprocess(style_img.cpu()))
     plt.show()
     plt.figure()
-    
+
     c_loss = []
     s_loss = []
     t_loss = []
@@ -240,7 +239,7 @@ def style_transfer(content_image, style_image, image_size, style_size, content_l
         optimizer.zero_grad()
 
         feats = extract_features(img_var, cnn)
-        
+
         #TODO:Compute loss
         l_c = content_loss(content_weight, feats[content_layer], content_target)
         l_s = style_loss(feats, style_layers, style_targets, style_weights)
@@ -257,7 +256,7 @@ def style_transfer(content_image, style_image, image_size, style_size, content_l
         if t == decay_lr_at:
             optimizer = torch.optim.Adam([img_var], lr=decayed_lr)
         optimizer.step()
-        
+
         print('Iteration %d, loss %g'%(t, loss))
         if t % 100 == 0:
             print('Iteration {}'.format(t))
@@ -277,7 +276,7 @@ def main():
         'image_size' : 192,
         'style_size' : 512,
         'content_layer' : 3,
-        'content_weight' : 5e-2, 
+        'content_weight' : 5e-2,
         'style_layers' : (1, 4, 6, 7),
         'style_weights' : (20000, 500, 12, 1),
         'tv_weight' : 5e-2
