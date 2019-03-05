@@ -8,6 +8,7 @@ Homeworks/Homework?/data/*
 main.pdf
 *.gz
 *.zip
+*coco*
 *cache*
 */_minted-main/*
 Project/*
