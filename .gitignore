@@ -5,6 +5,7 @@ Homeworks/Homework?/data/*
 *.aux
 *.log
 *.out
+*.toc
 main.pdf
 *.gz
 *.zip
