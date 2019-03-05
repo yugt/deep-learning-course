@@ -267,6 +267,15 @@ def style_transfer(content_image, style_image, image_size, style_size, content_l
     plt.axis('off')
     plt.imshow(deprocess(img.cpu()))
     plt.show()
+    tl,=plt.semilogy(range(200), total_loss, label='t_l')
+    cl,=plt.semilogy(range(200), c_loss, label='c_l')
+    sl,=plt.semilogy(range(200), s_loss, label='s_l')
+    tv,=plt.semilogy(range(200), t_loss, label='tv')
+    plt.legend((tl, cl, sl, tv),
+    ('total loss', 'content loss', 'style loss', ' total variation'))
+    plt.xlabel("iteration")
+    plt.ylabel('loss')
+    plt.show()
 
 def main():
     # Composition VII + Tubingen

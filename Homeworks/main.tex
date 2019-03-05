@@ -108,21 +108,21 @@ I may decrease the learning rate.
 
 \section{Homework \thesection\ Report}
 \subsection{Transfer learning}
-\begin{tiny}
-\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework2/code/transfer_learning.py}
-\end{tiny}
+\begin{scriptsize}
+    \inputminted[frame=single,framesep=9pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=5pt]{python}{./Homework2/code/transfer_learning.py}
+\end{scriptsize}
 \begin{figure}[htbp]
     \centering
     \begin{subfigure}[t]{0.48\textwidth}
         \centering
         \includegraphics[trim={3in 0in 3in 0in},scale=0.8]{./Homework2/output/hw2p1_fig01.png}
-        \caption{Test 1}
+        \caption{Finrtune}
     \label{hw2p1a}
     \end{subfigure}\\
     \begin{subfigure}[t]{0.48\textwidth}
         \centering
         \includegraphics[trim={3in 0in 3in 0in},scale=0.8]{./Homework2/output/hw2p1_fig02.png}
-        \caption{Test 2}
+        \caption{Freeze}
     \label{hw2p1b}
     \end{subfigure}
     \caption{Transfer learning}
@@ -130,9 +130,9 @@ I may decrease the learning rate.
 
 \newpage
 \subsection{Style Transfer}
-\begin{tiny}
-\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework2/code/style_transfer.py}
-\end{tiny}
+\begin{scriptsize}
+    \inputminted[frame=single,framesep=9pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework2/code/style_transfer.py}
+\end{scriptsize}
 \begin{figure}[htbp]
     \centering
     \begin{subfigure}[t]{0.48\textwidth}
@@ -155,9 +155,15 @@ I may decrease the learning rate.
     \end{subfigure}
     \begin{subfigure}[t]{0.48\textwidth}
         \centering
-        \includegraphics[trim={3in 0in 3in 0in},scale=0.8]{./Homework2/output/hw2p2_fig04.png}
+        \includegraphics[trim={3in 0in 3in 0in},scale=0.5]{./Homework2/output/hw2p2_fig04.png}
         \caption{Iteration 200}
     \label{hw2p2d}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[trim={3in 0in 3in 0in},scale=0.5]{./Homework2/output/hw2p2_fig13.png}
+        \caption{Learning curve}
+    \label{hw2p2e}
     \end{subfigure}
     \caption{Style transfer for Tubingen \& Composition VII}
 \end{figure}
@@ -169,25 +175,31 @@ I may decrease the learning rate.
         \centering
         \includegraphics[trim={3in 1in 3in 1in},scale=0.8]{./Homework2/output/hw2p2_fig05.png}
         \caption{Content and Source}
-    \label{hw2p2e}
+    \label{hw2p2f}
     \end{subfigure}\\
     \begin{subfigure}[t]{0.48\textwidth}
         \centering
-        \includegraphics[trim={3in 0in 3in 0in},scale=0.45]{./Homework2/output/hw2p2_fig06.png}
+        \includegraphics[trim={3in 0in 3in 0in},scale=0.5]{./Homework2/output/hw2p2_fig06.png}
         \caption{Iteration 0}
-    \label{hw2p2f}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.48\textwidth}
-        \centering
-        \includegraphics[trim={3in 0in 3in 0in},scale=0.45]{./Homework2/output/hw2p2_fig07.png}
-        \caption{Iteration 100}
     \label{hw2p2g}
     \end{subfigure}
     \begin{subfigure}[t]{0.48\textwidth}
         \centering
-        \includegraphics[trim={3in 0in 3in 0in},scale=0.7]{./Homework2/output/hw2p2_fig08.png}
-        \caption{Iteration 200}
+        \includegraphics[trim={3in 0in 3in 0in},scale=0.5]{./Homework2/output/hw2p2_fig07.png}
+        \caption{Iteration 100}
     \label{hw2p2h}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[trim={3in 0in 3in 0in},scale=0.5]{./Homework2/output/hw2p2_fig08.png}
+        \caption{Iteration 200}
+    \label{hw2p2i}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[trim={3in 0in 3in 0in},scale=0.5]{./Homework2/output/hw2p2_fig14.png}
+        \caption{Learning curve}
+    \label{hw2p2j}
     \end{subfigure}
     \caption{Style transfer for Tubingen \& The Scream}
 \end{figure}
@@ -199,29 +211,36 @@ I may decrease the learning rate.
         \centering
         \includegraphics[trim={3in 1in 3in 1in},scale=0.8]{./Homework2/output/hw2p2_fig09.png}
         \caption{Content and Source}
-    \label{hw2p2i}
+    \label{hw2p2k}
     \end{subfigure}\\
     \begin{subfigure}[t]{0.48\textwidth}
         \centering
-        \includegraphics[trim={3in 0in 3in 0in},scale=0.45]{./Homework2/output/hw2p2_fig10.png}
+        \includegraphics[trim={3in 0in 3in 0in},scale=0.5]{./Homework2/output/hw2p2_fig10.png}
         \caption{Iteration 0}
-    \label{hw2p2j}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.48\textwidth}
-        \centering
-        \includegraphics[trim={3in 0in 3in 0in},scale=0.45]{./Homework2/output/hw2p2_fig11.png}
-        \caption{Iteration 100}
-    \label{hw2p2k}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.48\textwidth}
-        \centering
-        \includegraphics[trim={3in 0in 3in 0in},scale=0.7]{./Homework2/output/hw2p2_fig12.png}
-        \caption{Iteration 200}
     \label{hw2p2l}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[trim={3in 0in 3in 0in},scale=0.5]{./Homework2/output/hw2p2_fig11.png}
+        \caption{Iteration 100}
+    \label{hw2p2m}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[trim={3in 0in 3in 0in},scale=0.5]{./Homework2/output/hw2p2_fig12.png}
+        \caption{Iteration 200}
+    \label{hw2p2n}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[trim={3in 0in 3in 0in},scale=0.5]{./Homework2/output/hw2p2_fig15.png}
+        \caption{Learning curve}
+    \label{hw2p2o}
     \end{subfigure}
     \caption{Style transfer for Tubingen \& Starry Night}
 \end{figure}
 
+\newpage
 \subsection{Forward and Backward propagation module for RNN}
 
 \subsection{Forward and Backward propagation module for LSTM}
