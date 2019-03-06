@@ -40,7 +40,9 @@ train Loss: 0.1360 Acc: 0.9620
 dev Loss: 0.1522 Acc: 0.9544
 Training complete in 0m 53s
 Best dev Acc: 0.954400
-Best test Acc for BOW model: 0.949800
+Best test Acc for Bag of Word model: 0.949800
+
+
 Epoch 0/9
 ----------
 train Loss: 0.4375 Acc: 0.8038
@@ -83,7 +85,9 @@ train Loss: 0.0642 Acc: 0.9791
 dev Loss: 0.1279 Acc: 0.9569
 Training complete in 2m 32s
 Best dev Acc: 0.958200
-Best test Acc for Avg_Pool model: 0.951500
+Best test Acc for Avg Pool model: 0.951500
+
+
 Epoch 0/9
 ----------
 train Loss: 0.3967 Acc: 0.8497
@@ -127,6 +131,8 @@ dev Loss: 0.1255 Acc: 0.9590
 Training complete in 2m 24s
 Best dev Acc: 0.959700
 Best test Acc for GloVe model: 0.955100
+
+
 Epoch 0/9
 ----------
 train Loss: 0.3124 Acc: 0.8675
@@ -170,6 +176,8 @@ dev Loss: 0.1532 Acc: 0.9496
 Training complete in 5m 10s
 Best dev Acc: 0.955400
 Best test Acc for RNN model: 0.948900
+
+
 Epoch 0/9
 ----------
 train Loss: 0.2239 Acc: 0.9042

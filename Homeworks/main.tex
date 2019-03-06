@@ -3,12 +3,14 @@
 \usepackage{subcaption}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{scalerel}
+\usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{comment}
 \usepackage{minted}
 \usemintedstyle{manni}
 
-
+\DeclareMathOperator*{\Odot}{\scalerel*{\odot}{\sum}}
 
 \begin{document}
 \setcounter{section}{1}
@@ -242,9 +244,46 @@ I may decrease the learning rate.
 
 \newpage
 \subsection{Forward and Backward propagation module for RNN}
+Here we adopt the notation \(\odot\) as element-wise multiplication, and the matrix multiplications are abbreviated.
+Also, we derive the mathematical notation (vectors are columes) instead of the notation in code.
+
+\setcounter{subsubsection}{1}
+\subsubsection{RNN step backward}
+We observe that \(\frac{\partial \tanh\theta}{\partial\theta}=1-\tanh^2\theta\), so by chain rule, we have
+\begin{align*}
+    \frac{\partial L}{\partial x_t}&= W_x^\mathrm{T}\left[\frac{\partial L}{\partial h_t}\odot (1-h_t^2) \right]\\
+    \frac{\partial L}{\partial W_t}&= \left[\frac{\partial L}{\partial h_t}\odot (1-h_t^2) \right]x_t^\mathrm{T}\\
+    \frac{\partial L}{\partial h_{t-1}}&= W_h^\mathrm{T}\left[\frac{\partial L}{\partial h_t}\odot (1-h_t^2) \right]\\
+    \frac{\partial L}{\partial W_h}&= \left[\frac{\partial L}{\partial h_t}\odot (1-h_t^2) \right]h_{t-1}^\mathrm{T}\\
+    \frac{\partial L}{\partial b}&= \left[\frac{\partial L}{\partial h_t}\odot (1-h_t^2) \right]
+\end{align*}
+
+\setcounter{subsubsection}{3}
+\subsubsection{RNN step backward total}
+\begin{align*}
+    \frac{\partial L}{\partial x_t}&=\left[W_x^\mathrm{T}(1-h_t^2)\right]\odot
+        \sum_{i=0}^{T-t}\left[\left(W_h^\mathrm{T}\right)^{T-t-i}\frac{\partial L}{\partial h_{T-i}}\Odot_{j=i}^{T-t-1}\left(1-h_{T-j}^2 \right) \right]\\
+    \frac{\partial L}{\partial W_x}&=\sum_{t=1}^{T}
+        \left\{(1-h_t^2)\odot \sum_{i=0}^{T-t}
+        \left[\left(W_h^\mathrm{T}\right)^{T-t-i}\frac{\partial L}{\partial h_{T-i}}
+        \Odot_{j=i}^{T-t-1}\left(1-h_{T-j}^2 \right) \right]\right\}x_t^{\mathrm{T}}\\
+    \frac{\partial L}{\partial h_0}&=\left[W_h^\mathrm{T}(1-h_1^2)\right]\odot
+        \sum_{i=0}^{T-1}\left[\left(W_h^\mathrm{T}\right)^{T-1-i}\frac{\partial L}{\partial h_{T-i}}\Odot_{j=i}^{T-2}\left(1-h_{T-j}^2 \right) \right]\\
+    \frac{\partial L}{\partial W_h}&=\sum_{t=1}^{T}
+        \left\{(1-h_t^2)\odot \sum_{i=0}^{T-t}
+        \left[\left(W_h^\mathrm{T}\right)^{T-t-i}\frac{\partial L}{\partial h_{T-i}}
+        \Odot_{j=i}^{T-t-1}\left(1-h_{T-j}^2 \right) \right]\right\}h_{t-1}^{\mathrm{T}}\\
+    \frac{\partial L}{\partial b}&=\sum_{t=1}^{T}
+        \left\{(1-h_t^2)\odot \sum_{i=0}^{T-t}
+        \left[\left(W_h^\mathrm{T}\right)^{T-t-i}\frac{\partial L}{\partial h_{T-i}}
+        \Odot_{j=i}^{T-t-1}\left(1-h_{T-j}^2 \right) \right]\right\}
+\end{align*}
 
 \subsection{Forward and Backward propagation module for LSTM}
 
+
+
+\newpage
 \subsection{Application to Image Captioning}
 \begin{figure}[htbp]
     \centering
@@ -315,6 +354,14 @@ I may decrease the learning rate.
     \caption{Image captioning RNN}
 \end{figure}
 
+\newpage
 \subsection{Application to text classification}
-
+\begin{itemize}
+    \item{BOW} 94.98\%
+    \item{AvgPool} 95.15\%
+    \item{GloVe} 95.51\%
+    \item{RNN} 94.89\%
+    \item{LSTM} 96.70\%
+\end{itemize}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework2/output/hw2p6.txt}
 \end{document}
