@@ -185,7 +185,7 @@ def lstm_step_forward(x, prev_h, prev_c, Wx, Wh, b):
     # for forget gate, input gate, concurrent input, output gate. Wh and b also #
     # follow the same order.                                                    #
     #############################################################################
-    A = x.dot(Wx) + prev_h.dot(Wh) + b #N, 4H
+    A = x.dot(Wx) + prev_h.dot(Wh) + b
     af, ai, ac, ao = np.split(A, 4, axis=1)
 
     f = sigmoid(af)
@@ -228,8 +228,7 @@ def lstm_step_backward(dnext_h, dnext_c, cache):
     x, prev_h, prev_c, Wx, Wh, af, ai, ac, ao, f, i, o, c, next_c = cache
     do = dnext_h * np.tanh(next_c)
 
-    ##
-    dnext_c += dnext_h * o * (1-np.tanh(next_c)**2) # v
+    dnext_c += dnext_h * o * (1-np.tanh(next_c)**2)
 
     df = dnext_c * prev_c
     di = dnext_c * c
@@ -239,7 +238,7 @@ def lstm_step_backward(dnext_h, dnext_c, cache):
     daf = df * f *(1-f)
     dai = di * i *(1-i)
     dac = dc * (1-c**2)
-    dao = do * o *(1-o) # v
+    dao = do * o *(1-o)
 
     dA = np.concatenate((daf, dai, dac, dao),axis=1)
 
@@ -393,7 +392,7 @@ def temporal_fc_forward(x, w, b):
     """
     (N, T, D) = x.shape
     M = b.shape[0]
-    out = x.reshape(N*T, D).dot(w).reshape(N,T,M)+b
+    out = x.reshape(N*T, D).dot(w).reshape(N,T,M) + b
     cache = x,w,b,out
     return out, cache
 
@@ -414,7 +413,7 @@ def temporal_fc_backward(dout, cache):
     D = x.shape[2]
     reshaped_dout = dout.reshape(N*T, M)
     dx = reshaped_dout.dot(w.T).reshape(N, T, D)
-    dw = x.reshape(N*T, D).T.dot(reshaped_dout) #(D, NT)(NT, M) = (D, M)
+    dw = x.reshape(N*T, D).T.dot(reshaped_dout)
     db = np.sum(reshaped_dout, axis = 0)
     return dx, dw, db
 
@@ -445,9 +444,9 @@ def temporal_softmax_loss(x, y, mask):
     """
     (N, T, V) = x.shape
 
+    mask_reshaped = mask.reshape(N*T)
     x_reshaped = x.reshape(N*T, V)
     y_reshaped = y.reshape(N*T)
-    mask_reshaped = mask.reshape(N*T)
 
     exp_x = np.exp(x_reshaped)
     softmax_x = exp_x / np.sum(exp_x, axis=1, keepdims=True)
