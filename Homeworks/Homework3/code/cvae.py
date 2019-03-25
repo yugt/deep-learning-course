@@ -26,7 +26,12 @@ class CVAE(nn.Module):
         ### Define a three layer neural network architecture #
         ### for the recognition_model                        #
         ######################################################
-
+        self.relu = nn.ReLU()
+        self.sigmoid = nn.Sigmoid()
+        self.fc1 = nn.Linear(self.input_size + self.class_size, self.units)
+        self.fc2 = nn.Linear(self.units, self.units)
+        self.layer_mu = nn.Linear(self.units, self.latent_size)
+        self.layer_logvar = nn.Linear(self.units, self.latent_size)
         ######################################################
         ###               END OF YOUR CODE                 ###
         ######################################################
@@ -40,7 +45,9 @@ class CVAE(nn.Module):
         ### Define a three layer neural network architecture #
         ### for the generation_model                         #
         ######################################################
-
+        self.fc3 = nn.Linear(self.latent_size + self.class_size, self.units)
+        self.fc4 = nn.Linear(self.units, self.units)
+        self.x_hat = nn.Linear(self.units, self.input_size)
         ######################################################
         ###               END OF YOUR CODE                 ###
         ######################################################
@@ -51,11 +58,11 @@ class CVAE(nn.Module):
         """
         Computes the parameters of the posterior distribution q(z | x, c) using the
         recognition network defined in the constructor
-    
+
         Inputs:
         - x: PyTorch Variable of shape (batch_size, input_size) for the input data
         - c: PyTorch Variable of shape (batch_size, num_classes) for the input data class
-        
+
         Returns:
         - mu: PyTorch Variable of shape (batch_size, latent_size) for the posterior mu
         - logvar PyTorch Variable of shape (batch_size, latent_size) for the posterior
@@ -64,8 +71,11 @@ class CVAE(nn.Module):
         ###########################
         ######### TO DO ###########
         ###########################
-        mu = None
-        logvar = None
+        x_c = torch.cat((x, c),1)
+        h1 = self.relu(self.fc1(x_c))
+        h2 = self.relu(self.fc2(h1))
+        mu = self.layer_mu(h2)
+        logvar = self.layer_logvar(h2)
         return mu, logvar
 
 
@@ -78,29 +88,32 @@ class CVAE(nn.Module):
         """
         Computes the generation output from the generative distribution p(x | z, c)
         using the generation network defined in the constructor
-    
+
         Inputs:
         - z: PyTorch Variable of shape (batch_size, latent_size) for the latent vector
         - c: PyTorch Variable of shape (batch_size, num_classes) for the input data class
-        
+
         Returns:
         - x_hat: PyTorch Variable of shape (batch_size, input_size) for the generated data
         """
         ###########################
         ######### TO DO ###########
         ###########################
-        x_hat = None
+        z_c = torch.cat((z, c),1)
+        h3 = self.relu(self.fc3(z_c))
+        h4 = self.relu(self.fc4(h3))
+        x_hat = self.sigmoid(self.x_hat(h4))
         return x_hat
 
     def forward(self, x, c):
         """
         Performs the inference and generation steps of the CVAE model using
         the recognition_model, reparametrization trick, and generation_model
-    
+
         Inputs:
         - x: PyTorch Variable of shape (batch_size, input_size) for the input data
         - c: PyTorch Variable of shape (batch_size, num_classes) for the input data class
-        
+
         Returns:
         - x_hat: PyTorch Variable of shape (batch_size, input_size) for the generated data
         - mu: PyTorch Variable of shape (batch_size, latent_size) for the posterior mu
@@ -110,9 +123,9 @@ class CVAE(nn.Module):
         ###########################
         ######### TO DO ###########
         ###########################
-        x_hat = None
-        mu = None
-        logvar = None
+        mu, logvar = self.recognition_model(x, c)
+        z = self.reparametrize(mu, logvar)
+        x_hat = self.generation_model(z, c)
         return x_hat, mu, logvar
 
 
@@ -153,20 +166,21 @@ def loss_function(x_hat, x, mu, logvar):
     """
     Computes the negative variational lowerbound for conditional vae
     Note: We compute -lowerbound because we optimize the network by minimizing a loss
-
     Inputs:
     - x_hat: PyTorch Variable of shape (batch_size, input_size) for the generated data
     - x: PyTorch Variable of shape (batch_size, input_size) for the real data
     - mu: PyTorch Variable of shape (batch_size, latent_size) for the posterior mu
     - logvar: PyTorch Variable of shape (batch_size, latent_size) for the posterior logvar
-    
+
     Returns:
     - loss: PyTorch Variable containing the (scalar) loss for the negative lowerbound.
     """
     ###########################
     ######### TO DO ###########
     ###########################
-    loss = None
+    BCE = F.binary_cross_entropy(x_hat, x, size_average=False)
+    DKL = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+    loss = (BCE + DKL) / x.shape[0]
     return loss
 
 
@@ -179,10 +193,10 @@ def main():
     latent_size = 20 # z dim
     num_classes = 10
     num_epochs = 11
-    
+
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
     train_loader = torch.utils.data.DataLoader(
-            datasets.MNIST('./data', train=True, download=True,
+            datasets.MNIST('../data', train=True, download=True,
                            transform=transforms.ToTensor()),
             batch_size=batch_size, shuffle=True, **kwargs)
 
