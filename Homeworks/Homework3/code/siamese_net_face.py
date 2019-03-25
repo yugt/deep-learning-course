@@ -33,8 +33,8 @@ def show_plot(iteration,loss):
     plt.show()
 
 class Config():
-    training_dir = "att_faces/training/"
-    testing_dir = "att_faces/testing/"
+    training_dir = "../data/att_faces/training/"
+    testing_dir = "../data/att_faces/testing/"
     train_batch_size = 64
     train_number_epochs = 200
 
@@ -100,16 +100,39 @@ class SiameseNetwork(nn.Module):
         # MaxPool(kernel_size=2)
         # ReLU
         # BatchNorm
-
+        self.conv = nn.Sequential(
+            nn.Conv2d(in_channels=1, out_channels=8, kernel_size=3, padding=1),
+            nn.MaxPool2d(kernel_size=2),
+            nn.ReLU(),
+            nn.BatchNorm2d(num_features=8),
+            nn.Conv2d(in_channels=8, out_channels=16, kernel_size=3, padding=1),
+            nn.MaxPool2d(kernel_size=2),
+            nn.ReLU(),
+            nn.BatchNorm2d(num_features=16),
+            nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, padding=1),
+            nn.MaxPool2d(kernel_size=2),
+            nn.ReLU(),
+            nn.BatchNorm2d(num_features=32),
+        )
         # Fully connected(out_features=1024)
         # ReLU
         # Fully connected(out_features=512)
         # ReLU
         # Fully connected(out_features=8)
+        self.fc = nn.Sequential(
+            nn.Linear(4608,1024),
+            nn.ReLU(),
+            nn.Linear(1024,512),
+            nn.ReLU(),
+            nn.Linear(512,8),
+        )
 
     def forward_once(self, x):
         #TODO: implement the forward pass to get features for input image
-        pass
+        conv_out = self.conv(x)
+        N, _, _, _ = conv_out.shape
+        conv_out = conv_out.view(N,-1)
+        return self.fc(conv_out)
         #################################################################
 
     def forward(self, input1, input2):
@@ -132,7 +155,8 @@ class ContrastiveLoss(torch.nn.Module):
         #TODO: argument output1 is f(x1), output2 is f(x2)
         # calculate the contrasive loss and return it
         # Note that in this function we have batch of samples as input.
-        pass
+        norm = torch.norm(output1 - output2)
+        return torch.sum((1-label) * norm + label * max(0, self.margin - torch.sqrt(norm)) ** 2)
         ###############################################################
 
 
@@ -181,6 +205,9 @@ if __name__ == "__main__":
                 iteration_number +=10
                 counter.append(iteration_number)
                 loss_history.append(loss_contrastive.item())
+    plt.plot(loss_history)
+    plt.savefig('loss_history.png')
+    plt.close()
 
     train_dataloader = DataLoader(siamese_dataset, shuffle=False, num_workers=10, batch_size=1)
     dataiter = iter(train_dataloader)
