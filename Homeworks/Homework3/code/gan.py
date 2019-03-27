@@ -19,7 +19,7 @@ plt.rcParams['figure.figsize'] = (10.0, 8.0) # set default size of plots
 plt.rcParams['image.interpolation'] = 'nearest'
 plt.rcParams['image.cmap'] = 'gray'
 
-def show_images(images):
+def show_images(images, iter):
     images = np.reshape(images, [images.shape[0], -1])  # images reshape to (batch_size, D)
     sqrtn = int(np.ceil(np.sqrt(images.shape[0])))
     sqrtimg = int(np.ceil(np.sqrt(images.shape[1])))
@@ -35,8 +35,8 @@ def show_images(images):
         ax.set_yticklabels([])
         ax.set_aspect('equal')
         plt.imshow(img.reshape([sqrtimg,sqrtimg]))
-        plt.savefig('../output/gan/%d.png'%(i))
         print('plot image {}'.format(i))
+    plt.savefig('../output/gan/%d.png'%(iter))
     return
 
 
@@ -307,7 +307,7 @@ def run_a_gan(D, G, D_solver, G_solver, discriminator_loss, generator_loss,
                 print('Iter: {}, D: {:.4}, G:{:.4}'.format(
                     iter_count,d_total_error.data,g_error.data))
                 imgs_numpy = fake_images.data.cpu().numpy()
-                show_images(imgs_numpy)
+                show_images(imgs_numpy, iter_count)
                 # plt.pause(1.0)
                 # print()
             iter_count += 1
@@ -334,7 +334,7 @@ def main():
 
     imgs = loader_train.__iter__().next()[0].view(
         batch_size, 784).numpy().squeeze()
-    show_images(imgs)
+    # show_images(imgs)
 
     dtype = torch.FloatTensor
 #    dtype = torch.cuda.FloatTensor ## UNCOMMENT THIS LINE IF YOU'RE ON A GPU!
