@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import numpy as np
 import random
 import time
 
@@ -53,10 +54,11 @@ def max_len(text):
 
 def accuracy(out, labels):
     predictions = (out > 0.5)
-    return torch.mean((predictions.view(len(labels)).float() == labels).float())
+    return torch.mean((predictions.view(len(labels)).float() == labels).float()).numpy()
 
 def train(net, epoch_num, batch_size, trainset, trainloader):
     optimizer = optim.Adam(net.parameters(), lr=0.01)
+    accuracy_log = np.zeros(epoch_num)
     for epoch in range(epoch_num):
         start = time.time()
         print("epoch ", epoch)
@@ -70,20 +72,21 @@ def train(net, epoch_num, batch_size, trainset, trainloader):
             loss = F.binary_cross_entropy(out, y)
             loss.backward()
             optimizer.step()
-        if epoch % 5 == 0 or epoch == epoch_num - 1:
-            with torch.no_grad():
-                total_accuracy = 0
-                total_accuracy_val = 0
-                for data in trainloader:
-                    x, y, mask = data
-                    x = x.to(device)
-                    y = y.to(device)
-                    mask = mask.to(device)
-                    out = net.forward(x, mask)
-                    total_accuracy += accuracy(out, y)
-                print('train: ', total_accuracy / len(trainloader))
+        with torch.no_grad():
+            total_accuracy = 0
+            total_accuracy_val = 0
+            for data in trainloader:
+                x, y, mask = data
+                x = x.to(device)
+                y = y.to(device)
+                mask = mask.to(device)
+                out = net.forward(x, mask)
+                total_accuracy += accuracy(out, y)
+            accuracy_log[epoch] = total_accuracy / len(trainloader)
         end = time.time()
+        print(accuracy_log)
         print('eplased time', end-start)
+    return accuracy_log
 
 def test(net, batch_size, testset, testloader):
     with torch.no_grad():
@@ -137,7 +140,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #device = torch.device('cpu')
 torch.tensor([1], device=device)
 
-net = CNN(VOCAB_SIZE, in_channel, out_channel, kernel_size, average=False).to(device)
+net = CNN(VOCAB_SIZE, in_channel, out_channel, kernel_size, average=True).to(device)
 net.zero_grad()
 
 epoch_num = 10
@@ -145,7 +148,7 @@ batch_size = 500
 
 trainset = torch.utils.data.TensorDataset(lookup_tensor, labels, mask)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True)
-train(net, epoch_num, batch_size, trainset, trainloader)
+np.savetxt('avg{}'.format(kernel_size), train(net, epoch_num, batch_size, trainset, trainloader))
 
 
 testset = torch.utils.data.TensorDataset(lookup_tensor_test, labels_test, mask_test)
