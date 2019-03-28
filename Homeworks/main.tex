@@ -371,6 +371,30 @@ Handwritten instead.
 
 \section{Homework \thesection\ Report}
 \subsection{Text classification using CNN}
+
+\subsubsection{Output of convolution layer}
+\subsubsection{Size of convolution layer}
+\subsubsection{Size of output pulling layer}
+500
+\subsubsection{Implementation}
+\inputminted[frame=single,framesep=10pt,linenos, breaklines,xleftmargin=\parindent,xrightmargin=\parindent]{python}{./Homework3/code/cnn.py}
+\subsubsection{Accuracy for choices of hyperparameters}
+\paragraph{Training accuracy}
+\begin{figure}{htbp}
+    \centering
+    \includegraphics[trim={3in 3.5in 3in 3.5in},scale=0.7]{./Homework3/output/cnn/accuracy.pdf}
+    \caption{Training accuracy by epoch}
+    \label{hw3p1}
+\end{figure}
+\paragraph{Test accuracy}
+\begin{itemize}
+    \item AvgPool, kernel size 5: 94.21\%
+    \item AvgPool, kernel size 7: 93.84\%
+    \item MaxPool, kernel size 5: 94.37\%
+    \item MaxPool, kernel size 7: 94.29\%
+\end{itemize}
+
+
 \subsection{Siamese networks for learning embeddings}
 \subsection{Conditional variational autoencoders}
 \subsection{Generative Adversarial Networks}

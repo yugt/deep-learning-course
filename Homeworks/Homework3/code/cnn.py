@@ -12,6 +12,38 @@ import time
 torch.manual_seed(1)
 word_to_ix = {}
 
+class CNN(nn.Module):
+
+    def __init__(self, vocab_size, in_channel, out_channel, kernel_size, average=True):
+        super(CNN, self).__init__()
+        self.embeddings = nn.Embedding(vocab_size, in_channel)
+        self.conv = nn.Conv1d(in_channel, out_channel, kernel_size)
+        self.linear = nn.Linear(out_channel, 1)
+        self.average = average
+
+    def forward(self, lookup_tensor, mask):
+        N, L = lookup_tensor.shape
+        embeds = self.embeddings(lookup_tensor) * mask.view(N, L, 1)
+        cnn_out = self.conv(embeds.transpose(2,1))
+        if self.average:
+            pool_out = torch.mean(cnn_out, 2)
+        else:
+            pool_out = torch.max(cnn_out, 2)[0]
+        relu_out = F.relu(pool_out)
+        return torch.sigmoid(self.linear(relu_out))
+
+def max_len(text):
+    max = 0
+    for t in text:
+        if len(t) > max:
+            max = len(t)
+    return max
+
+def accuracy(out, labels):
+    predictions = (out > 0.5)
+    return torch.mean((predictions.view(len(labels)).float() == labels).float()).numpy()
+
+
 def get_text_label(filename):
     with open(filename, 'r') as f:
         lines = f.readlines()
@@ -45,16 +77,6 @@ def get_lookup(text, max_len, D):
 
     return lookup_tensor, mask.view(N, L)
 
-def max_len(text):
-    max = 0
-    for t in text:
-        if len(t) > max:
-            max = len(t)
-    return max
-
-def accuracy(out, labels):
-    predictions = (out > 0.5)
-    return torch.mean((predictions.view(len(labels)).float() == labels).float()).numpy()
 
 def train(net, epoch_num, batch_size, trainset, trainloader):
     optimizer = optim.Adam(net.parameters(), lr=0.01)
@@ -100,25 +122,7 @@ def test(net, batch_size, testset, testloader):
             total_accuracy += accuracy(out, y)
         print('test: ', total_accuracy / len(testloader))
 
-class CNN(nn.Module):
 
-    def __init__(self, vocab_size, in_channel, out_channel, kernel_size, average=True):
-        super(CNN, self).__init__()
-        self.embeddings = nn.Embedding(vocab_size, in_channel)
-        self.conv = nn.Conv1d(in_channel, out_channel, kernel_size)
-        self.linear = nn.Linear(out_channel, 1)
-        self.average = average
-
-    def forward(self, lookup_tensor, mask):
-        N, L = lookup_tensor.shape
-        embeds = self.embeddings(lookup_tensor) * mask.view(N, L, 1)
-        cnn_out = self.conv(embeds.transpose(2,1))
-        if self.average:
-            pool_out = torch.mean(cnn_out, 2)
-        else:
-            pool_out = torch.max(cnn_out, 2)[0]
-        relu_out = F.relu(pool_out)
-        return torch.sigmoid(self.linear(relu_out))
 
 text, label = get_text_label('../data/train.txt')
 get_vocab(text)
