@@ -82,3 +82,37 @@ for k in range(epoch):
     theta_saved[k+1,] = t
     loss_saved[k+1] = loss(t)
 estimate_conv_rate(np.sqrt(np.square(theta_saved - star).sum(axis=1)), 'ex2cn.pdf')
+
+###### (extra) ######
+import torch
+import torch.nn as nn
+from torch.autograd import Variable
+
+inputs = Variable(torch.from_numpy(data[:, 0])).unsqueeze(1).float()
+labels = Variable(torch.from_numpy(data[:, 1])).unsqueeze(1).float()
+
+model = nn.Linear(1, 1)
+criterion = nn.MSELoss()
+optimizers = [torch.optim.Adam(model.parameters(), lr=learning_rate),
+    torch.optim.AdamW(model.parameters(), lr=learning_rate),
+    torch.optim.Adagrad(model.parameters(), lr=learning_rate),
+    torch.optim.Adamax(model.parameters(), lr=learning_rate),
+    torch.optim.RMSprop(model.parameters(), lr=learning_rate),
+    torch.optim.Rprop(model.parameters(), lr=learning_rate),
+]
+model.load_state_dict({'weight': torch.tensor([1.4]).unsqueeze(1),
+                        'bias': torch.tensor([1.8])})
+
+theta_saved = np.zeros((epoch, 2)); n=0
+for optimizer in optimizers:
+    n += 1
+    for k in range(epoch):
+        theta_saved[k, 0] = model.state_dict()['bias'].numpy()[0]
+        theta_saved[k, 1] = model.state_dict()['weight'].numpy()[0]
+        optimizer.zero_grad()
+        outputs = model(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+    estimate_conv_rate(np.sqrt(np.square(theta_saved - star).sum(axis=1)),
+        'ex2x{:d}.pdf'.format(n))

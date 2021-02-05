@@ -49,8 +49,8 @@ The gradient of the loss functioin is
 So the minimum is attained at
 \[ \begin{bmatrix} a_* \\ b_* \end{bmatrix} = \left(\overline{x^2}-\overline{x}^2 \right)^{-1} \begin{bmatrix}
     \overline{x^2}\cdot\overline{y} - \overline{x}\cdot\overline{xy} \\
-    \overline{xy} - \overline{x}\cdot\overline{y}
-\end{bmatrix} \]
+    \overline{xy} - \overline{x}\cdot\overline{y} \end{bmatrix}
+    \approx \begin{bmatrix}  -1.11233301 \\ 1.48321421 \end{bmatrix} \]
 The convergence rate of gradient descent is
 \[ \lim_{n\to\infty}\frac{\|(a_n,b_n)-(a_*,b_*)\|}{\|(a_{n-1},b_{n-1})-(a_*,b_*)\|}\approx0.99 \]
 \begin{figure}[htbp]
@@ -61,15 +61,54 @@ The convergence rate of momentum and Nesterov methods are hard to find on the pl
 It takes around 600 epochs to converge to \(10^{-15}\) float-point accuracy, while regular gradient descent takes 1000 epochs to reach \(10^{-4}\).
 \begin{figure}[htbp]
     \centering
-    \begin{subfigure}[t]{0.6\textwidth}
+    \begin{subfigure}[t]{0.68\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Homework1/ex2cm.pdf}
         \caption{Convergence of momentum method}
     \end{subfigure}\vspace{10pt}
-    \begin{subfigure}[t]{0.6\textwidth}
+    \begin{subfigure}[t]{0.68\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Homework1/ex2cn.pdf}
         \caption{Convergence of Nesterov method}
+    \end{subfigure}
+\end{figure}
+\paragraph{(extra)}
+Other gradient descent methods are implemented in PyTorch.
+Most of the errors don't decay as fast as the regular gradient descent.
+This is because they are designed for highly non-convex loss functions (to escape from local optimum), while the MSE loss function for linear regression is convex.
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Homework1/ex2x1.pdf}
+        \caption{Adam}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Homework1/ex2x2.pdf}
+        \caption{AdamW}
+    \end{subfigure}
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Homework1/ex2x3.pdf}
+        \caption{Adagrad}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Homework1/ex2x4.pdf}
+        \caption{Adamax}
+    \end{subfigure}
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Homework1/ex2x5.pdf}
+        \caption{RMSprop}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Homework1/ex2x6.pdf}
+        \caption{Rprop}
     \end{subfigure}
 \end{figure}
 \inputminted[]{python}{./Homework1/ex2.py}
