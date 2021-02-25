@@ -8,9 +8,11 @@ Homeworks/Homework?/data/*
 *.toc
 main.pdf
 *.gz
+*.pt
 *.zip
 *coco*
 *cache*
+*-ubyte*
 */_minted-main/*
-Project/*
+Project/
 .public
