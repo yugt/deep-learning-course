@@ -12,9 +12,9 @@
 \usemintedstyle{manni}
 
 \begin{document}
-
+\setcounter{section}{1}
 \section{Homework}
-
+\begin{comment}
 \subsection{Overfitting}
 \begin{figure}[htbp]
     \centering
@@ -35,7 +35,8 @@ By our observation, \(k_*=2\), and the coefficients are
     \includegraphics{Homework1/ex1c.pdf}
     \caption{Fitted polynomial by least-square linear regression}
 \end{figure}
-\inputminted[]{python}{./Homework1/ex1.py}
+\inputminted[breaklines=true, linenos=true]{python}{./Homework1/ex1.py}
+\newpage
 
 \subsection{Gradient descent}
 \paragraph{(a)}
@@ -111,7 +112,8 @@ This is because they are designed for highly non-convex loss functions (to escap
         \caption{Rprop}
     \end{subfigure}
 \end{figure}
-\inputminted[]{python}{./Homework1/ex2.py}
+\inputminted[breaklines=true, linenos=true]{python}{./Homework1/ex2.py}
+\newpage
 
 \subsection{Classification}
 \begin{figure}[htbp]
@@ -132,7 +134,107 @@ This is because they are designed for highly non-convex loss functions (to escap
 \end{figure}
 \clearpage
 }
-\inputminted[]{python}{./Homework1/ex3.py}
+\inputminted[breaklines=true, linenos=true]{python}{./Homework1/ex3.py}
+\newpage
+\end{comment}
 
+% \section{Homework}
+\subsection{Two-layers neural networks}
+\paragraph{(a)}
+Consider the following parameters
+\[ W_1=\begin{bmatrix} 3 & 5 \\ 1 & 3 \end{bmatrix} \hspace{1em}
+   b_1=\begin{bmatrix} 5 \\ 1 \end{bmatrix} \hspace{1em}
+   W_2=\begin{bmatrix} 1 & 0 \\ 0 & 3 \end{bmatrix} \hspace{1em}
+   b_2=\begin{bmatrix} 0 \\ 1 \end{bmatrix}. \]
+Plug in \(f(x)=b_2+W_2\left(\sigma(b_1+W_1 x) \right)\), we get
+\[ f(x_1)=\begin{bmatrix} 3 \\ 1 \end{bmatrix} \hspace{1em}
+   f(x_2)=\begin{bmatrix} 2 \\ 1 \end{bmatrix} \hspace{1em}
+   f(x_3)=\begin{bmatrix} 10 \\ 13 \end{bmatrix} \hspace{1em}
+   f(x_4)=\begin{bmatrix} 0 \\ 1 \end{bmatrix}. \]
+\paragraph{(b)}
+The result two-layer neural network after training has parameters
+\[ W_1=\begin{bmatrix} -0.6996 & 5.3405 \\ -0.3927 & 4.0549 \end{bmatrix} \hspace{5pt}
+   b_1=\begin{bmatrix} 5.6579 \\ 0.1506 \end{bmatrix} \hspace{5pt}
+   W_2=\begin{bmatrix} 1.2514 & -0.4970 \\ -0.2514 & 3.4970 \end{bmatrix} \hspace{5pt}
+   b_2=\begin{bmatrix} -1.0276 \\ 2.0276 \end{bmatrix}. \]
+The classification accuracy is 92.5\%.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.9]{Homework2/ex1b.pdf}
+    \caption{Trained two-layer neural network prediction}
+\end{figure}
+\inputminted[breaklines=true, linenos=true]{python}{./Homework2/ex1.py}
+\newpage
+
+\subsection{Neural networks dense in continuous functions}
+\paragraph{(a)}
+In this case, \(W_1, W_2\in\mathbb{R}^{1\times1}\) (so we write \(w_1, w_2\)), \(b_1,b_2\in\mathbb{R}^1\), and
+\[ f(x) = b_2 + w_2 \sigma(b_1 + w_1 x). \]
+Then plug in \(x=0\) and \(x=1\) to get following system of equations
+\begin{align*}
+    y_0 &= b_2 + w_2 \sigma(b_1+w_1\cdot0), \\
+    y_1 &= b_2 + w_2 \sigma(b_1+w_1\cdot1).
+\end{align*}
+We can choose \(b_2 = \min\{y_0, y_1\}\) and \(w_2=1\), then the equations simplify to
+\begin{align*}
+    \sigma(b_1) &= y_0 - \min\{y_0, y_1\} = \max\{0, y_0-y_1\} = \sigma(y_0-y_1), \\
+    \sigma(b_1 + w_1) &= y_1 - \min\{y_0, y_1\} = \max\{y_1-y_0, 0\} = \sigma(y_1-y_0).
+\end{align*}
+So we can choose \(w_1=y_1-y_0\) and then \(b_1=\sigma(y_0-y_1)\).
+To write them together,
+\[ f(x) = \min\{y_0, y_1\} + \sigma[\sigma(y_0-y_1)+(y_1-y_0)x]. \]
+\paragraph{(b)}
+Consider \(m=3\) so that
+\[ W_1=\begin{bmatrix} w_{11} \\ w_{12} \\ w_{13} \end{bmatrix} \hspace{1em}
+   b_1=\begin{bmatrix} b_{11} \\ b_{12} \\ b_{13} \end{bmatrix} \hspace{1em}
+   W_2=\begin{bmatrix} w_{21} \\ w_{22} \\ w_{23} \end{bmatrix} \hspace{1em}
+   b_2=\begin{bmatrix} b_{21} \\ b_{22} \\ b_{23} \end{bmatrix}. \]
+Then the conditions give the following equations
+\begin{align*}
+    f(0)=y_0 &\implies& y_0 - b_2 &= w_{21}\sigma(b_{11}) + w_{22}\sigma(b_{12}) + w_{23}\sigma(b_{13}) \\
+    f(1/2)=y_1 &\implies& y_1 - b_2 &= w_{21}\sigma(b_{11}+w_{11}/2) + w_{22}\sigma(b_{12}+w_{12}/2) + w_{23}\sigma(b_{13}+w_{13}/2) \\
+    f(1)=y_2 &\implies& y_2 - b_2 &= w_{21}\sigma(b_{11}+w_{11}) + w_{22}\sigma(b_{12}+w_{12}) + w_{23}\sigma(b_{13}+w_{13}),
+\end{align*}
+which is equivalent to
+\[ \begin{bmatrix} \sigma(b_{11}) & \sigma(b_{12}) & \sigma(b_{13}) \\
+    \sigma(b_{11}+w_{11}/2) & \sigma(b_{12}+w_{12}/2) & \sigma(b_{13}+w_{13}/2) \\ 
+    \sigma(b_{11}+w_{11}) & \sigma(b_{12}+w_{12}) & \sigma(b_{13}+w_{13}) \end{bmatrix}
+    \begin{bmatrix} w_{21} \\ w_{22} \\ w_{23} \end{bmatrix} = 
+    \begin{bmatrix} y_0-b_2 \\ y_1-b_2 \\ y_2-b_2 \end{bmatrix}. \]
+So we have some freedom to choose \(W_1\) and \(b_1, b_2\) without making the matrix singular.
+\[ W_1=\begin{bmatrix} 4 \\ 2 \\ 6 \end{bmatrix} \hspace{1em}
+   b_1=\begin{bmatrix} -1 \\ 2 \\ 3 \end{bmatrix} \hspace{1em}
+   b_2=\begin{bmatrix} 0 \\ 0 \\ 0 \end{bmatrix}. \]
+Then the system becomes
+\[ \begin{bmatrix} 0 & 2 & 3 \\ 1 & 3 & 6 \\ 3 & 4 & 9 \end{bmatrix}W_2 = \begin{bmatrix} y_0 \\ y_1 \\ y_2 \end{bmatrix}. \]
+The LHS matrix has determinant 3, so \(W_2\) has a unique solution.
+\paragraph{(c)}
+We can choose \(m=N+1\) so that
+\[ \begin{bmatrix} \sigma(b_{11}+w_{11}x_0) & \cdots & \sigma(b_{1m}+w_{1m}x_0) \\
+    \sigma(b_{11}+w_{11}x_1) & \ddots & \sigma(b_{1m}+w_{1m}x_1) \\ 
+    \vdots & \cdots & \vdots \\
+    \sigma(b_{11}+w_{11}x_{N}) & \cdots & \sigma(b_{1m}+w_{1m}x_N) \end{bmatrix}
+    \begin{bmatrix} w_{21} \\ \vdots \\ w_{2m} \end{bmatrix} = 
+    \begin{bmatrix} y_0-b_2 \\ \vdots \\ y_N-b_2 \end{bmatrix} \]
+can have a unique solution for \(W_2\) by carefully choosing \(W_1\) and \(b_1\).
+\paragraph{(Extra)}
+Notice that both \(f\) and \(g\) are continuous on the compact interval \([0, 1]\), so they are uniformly continuous.
+So for any \(\epsilon>0\) there exists a partition \((x_n)_{n=0}^{N}\subset[0, 1]\) (WLOG sorted as \(0\leq x_0<x_1<\cdots<x_N\leq1\)) with
+\[ \|(x_n)_{n=0}^{N}\|:= \max_{n\in[N]}|x_{n}-x_{n-1}| < \min\{\delta_1, \delta_2\}, \]
+where \(\delta_1, \delta_2\) are defined by
+\begin{align*}
+    \forall n\in[N],& |x-x_n|<\delta_1 \implies |g(x)-g(x_n)|<\frac{\epsilon}{3},\\
+    \forall n\in[N],& |x-x_n|<\delta_2 \implies |f(x)-f(x_n)|<\frac{\epsilon}{3},
+\end{align*}
+Then for all \(x\in[0, 1]\), there is \(n\in[N]\) such that \(|x-x_n|<\min\{\delta_1, \delta_2\}\) and thus
+\[ |f(x)-g(x)| \leq |f(x)-f(x_n)+g(x_n)-g(x)| \leq |f(x)-f(x_n)|+|g(x_n)-g(x)| < \frac{\epsilon}{3}+\frac{\epsilon}{3}, \]
+where we use the property \(f(x_n)=g(x_n)\) on the partition grids.
+\newpage
+
+\subsection{Convolutional neural networks}
+The beginning layers are adapted from VGG11.
+A few layers are removed so it's called VGG8.
+The test accuracy (on 10000 images) after training 10 epochs is 85.28\%.
+\inputminted[breaklines=true, linenos=true]{python}{./Homework2/ex3.py}
 
 \end{document}
