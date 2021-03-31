@@ -12,9 +12,9 @@
 \usemintedstyle{manni}
 
 \begin{document}
-\setcounter{section}{1}
-\section{Homework}
+\setcounter{section}{2}
 \begin{comment}
+\section{Homework}
 \subsection{Overfitting}
 \begin{figure}[htbp]
     \centering
@@ -136,9 +136,8 @@ This is because they are designed for highly non-convex loss functions (to escap
 }
 \inputminted[breaklines=true, linenos=true]{python}{./Homework1/ex3.py}
 \newpage
-\end{comment}
 
-% \section{Homework}
+\section{Homework}
 \subsection{Two-layers neural networks}
 \paragraph{(a)}
 Consider the following parameters
@@ -236,5 +235,85 @@ The beginning layers are adapted from VGG11.
 A few layers are removed so it's called VGG8.
 The test accuracy (on 10000 images) after training 10 epochs is 85.28\%.
 \inputminted[breaklines=true, linenos=true]{python}{./Homework2/ex3.py}
+\newpage
+\end{comment}
+
+\section{Homework}
+\subsection{n-gram models}
+\inputminted[breaklines=true, linenos=true]{python}{./Homework3/ex1.py}
+\paragraph{(a)}
+The total number of words is \(T=136312\).
+\paragraph{(b)}
+The 5 most common words with at least 8 characters are
+(certainly, 235), (knowledge, 152), (injustice, 111), (therefore, 109), (question, 99).
+\paragraph{(d)}
+The perplexity of the bi-gram model is \(PP=37.89928782828084\).
+\newpage
+
+\subsection{Recurrent neural networks}
+\inputminted[breaklines=true, linenos=true]{python}{./Homework3/ex2.py}
+\paragraph{(a)}
+The predicted characters are `hello'.
+\begin{align*}
+    \mathbf{y}_1&=\begin{bmatrix} 1.5232 &  1.1424 & -0.7616 & -0.3808\end{bmatrix}\\
+    \mathbf{y}_2&=\begin{bmatrix} 0.7087 &  0.8257 &  0.2340 & -0.4713\end{bmatrix}\\
+    \mathbf{y}_3&=\begin{bmatrix}-0.2096 &  0.1031 &  0.6255 & -0.2079\end{bmatrix}\\
+    \mathbf{y}_4&=\begin{bmatrix}-0.8934 & -0.4887 &  0.8095 &  0.0420\end{bmatrix}\\
+    \mathbf{y}_5&=\begin{bmatrix}-1.0946 & -0.9446 &  0.3000 &  0.3973\end{bmatrix}
+\end{align*}
+\paragraph{(b)}
+This is obtained by training the RNN with target being `olleh'.
+\begin{align*}
+    A &= \begin{bmatrix}
+         0.9330 & -2.4132 & -0.1931 &  2.2354 \\
+        -1.5668 &  3.1719 &  0.4204 &  0.2432
+    \end{bmatrix} \\
+    R &= \begin{bmatrix}
+         0.5683 &  0.3168 \\ -0.9781 &  2.0761
+    \end{bmatrix} \\
+    B &= \begin{bmatrix}
+         2.3623 &  0.8963 \\ -1.4019 &  1.6015 \\
+        -3.5722 &  0.9827 \\ 1.8588 & -1.5987
+    \end{bmatrix}
+\end{align*}
+\newpage
+
+\subsection{Vanishing/exploding gradient}
+\paragraph{(a)}
+By (vector-valued function) chain rule,
+\[ D_\mathbf{h}(\mathbf{h}\mapsto\sigma(R\mathbf{h}+A\mathbf{x}_t))=\sigma'(R\mathbf{h}+A\mathbf{x}_t)R, \hspace{1em} \mathbf{h},\mathbf{x}_t\in\mathbb{R}^d, R,A\in\mathbb{R}^{d\times d}, \sigma'\in\mathbb{R}^{d}\to\mathbb{R}^{d\times d}. \]
+so
+\[ D_{\mathbf{x}_1}\mathbf{y}_t =D_{\mathbf{h}_t}\mathbf{y}_t \left(\prod_{k=2}^{t}D_{\mathbf{h}_{k-1}}\mathbf{h}_k \right) D_{\mathbf{x}_1}\mathbf{h}_1=B\left( \prod_{k=2}^{t} \sigma'(R\mathbf{h}_{k-1}+A\mathbf{x}_{k})R \right)\sigma'(R\mathbf{h}_0+A\mathbf{x}_1)A. \]
+By product triangle inequality of matrix norm,
+\begin{align*}
+\|D_{\mathbf{x}_1}\mathbf{y}_t\| &\leq \|B\| \left( \prod_{k=2}^{t} \|\sigma'(R\mathbf{h}_{k-1}+A\mathbf{x}_{k})\|\cdot\|R\| \right)\|\sigma'(R\mathbf{h}_0+A\mathbf{x}_1)\|\cdot\|A\|\\
+&=\|B\|\left( \prod_{k=1}^{t} \|\sigma'(R\mathbf{h}_{k-1}+A\mathbf{x}_{k})\| \right)\|R\|^{t-1}\cdot\|A\|.
+\end{align*}
+\paragraph{(b)}
+For \(\mathbf{x}_1=(0, 0)\) and \(\mathbf{x}_1^\varepsilon=(\varepsilon, -\varepsilon)\),
+\begin{align*}
+\|\mathbf{y}_{30}-\mathbf{y}_{30}^\varepsilon\|_2(10^{-4},\cdots,10^{-9})= (1.2129358, 1.0311685, 1.7903578\times10^{-1},\\ 1.8076686\times10^{-2}, 1.8078436\times10^{-3}, 1.8078458\times10^{-4}).
+\end{align*}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.9]{Homework3/ex3.pdf}
+    \caption{perturbation effect (\(\mathbf{x}_1=(2, 1)\) invisible)}
+\end{figure}
+\paragraph{(c)}
+For \(\mathbf{x}_1=(2, 1)\) and \(\mathbf{x}_1^\varepsilon=(2+\varepsilon, 1-\varepsilon)\),
+\[ \|\mathbf{y}_{30}-\mathbf{y}_{30}^\varepsilon\|_2(10^{-4},\cdots,10^{-9})=(0, 0, 0, 0, 0, 0) \times10^{-16}, \]
+where \(10^{-16}\) is from the machine epsilon of the floating point arithmetic.
+This is because \(\sigma'\) is small near \(\mathbf{x}_1\):
+\[ \sigma'(R\mathbf{h}_0+A\mathbf{x}_1)=\sigma'(\mathbf{x}_1)=\begin{bmatrix} 1-\tanh^2(2) & 0 \\ 0 & 1-\tanh^2(1) \end{bmatrix} \approx \begin{bmatrix}0.07 & 0 \\ 0 & 0.42 \end{bmatrix}. \]
+The rest of the \(\sigma'\) are also small near \(R\mathbf{h}_k\), so the bound on \(D_{\mathbf{x}_1}\mathbf{y}_t\) is nearly 0.
+\paragraph{(Extra)}
+This is because \(\mathbf{x}_1^\varepsilon=(\varepsilon, -\varepsilon)\) is an eigenvector of \(R\) with corresponding eigenvalue \(\lambda_1=\frac{3}{2}>1\), so the initial perturbation get amplified; while \(\mathbf{x}_1^\varepsilon=(\varepsilon, \varepsilon)\) is another eigenvector of \(R\) with corresponding eigenvalue \(\lambda_2=-\frac{1}{2}>-1\), so the initial perturbation is compressed.
+For a random perturbation \(\mathbf{x}_1\in\mathbb{R}^2\), if it is amplified by \(R\), i.e.,
+\[ \mathbf{x}_1\in\{(x_1, x_2): x_1 x_2 < 0 \}\subset\mathbb{R}^2, \]
+then the perturbation has a large effect (expanded gradient).
+Otherwize,
+\[ \mathbf{x}_1\in\{(x_1, x_2): x_1 x_2 > 0 \}\subset\mathbb{R}^2 \]
+leads to a small effect due to vanishing gradient.
+\inputminted[breaklines=true, linenos=true]{python}{./Homework3/ex3.py}
 
 \end{document}
